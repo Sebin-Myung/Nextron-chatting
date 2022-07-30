@@ -1,6 +1,6 @@
 import React from "react";
 import Head from "next/head";
-import { Title, CustomInput } from "../components/tailwindStyledComponents";
+import { Title } from "../components/tailwindStyledComponents";
 import Link from "next/link";
 
 function Login() {
@@ -11,8 +11,8 @@ function Login() {
       </Head>
       <div className="flex flex-col justify-center items-center h-screen">
         <Title>로그인</Title>
-        <CustomInput type="text" placeholder="이메일을 입력하세요" />
-        <CustomInput type="password" placeholder="비밀번호를 입력하세요" className="mt-2" />
+        <input type="text" placeholder="이메일을 입력하세요" className="input input-bordered w-full" />
+        <input type="password" placeholder="비밀번호를 입력하세요" className="input input-bordered w-full mt-2" />
         <button className="btn btn-primary btn-block mt-2">로그인</button>
         <div className="divider mb-0"></div>
         <p className="text-sm mb-12">
