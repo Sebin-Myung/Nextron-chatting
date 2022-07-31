@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import alertDataSlice from "./slices/alertDataSlice";
+import userListSlice from "./slices/userListSlice";
 
 export const store = configureStore({
   reducer: {
     alertData: alertDataSlice,
+    userList: userListSlice,
   },
 });
 
