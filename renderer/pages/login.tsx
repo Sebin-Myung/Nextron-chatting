@@ -31,7 +31,12 @@ function Login() {
           const user = userCredential.user;
           localStorage.setItem(
             "currentUser",
-            JSON.stringify({ uid: user.uid, email: user.email, nickname: user.displayName }),
+            JSON.stringify({
+              uid: user.uid,
+              email: user.email,
+              nickname: user.displayName,
+              profileImage: user.photoURL || "",
+            }),
           );
           setAlertWithTimeOut(dispatch, `${user.displayName}님 환영합니다.`);
           Router.push("/main");

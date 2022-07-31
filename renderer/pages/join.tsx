@@ -4,10 +4,12 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Title, Warning } from "../components/tailwindStyledComponents";
 import Link from "next/link";
 import BackButton from "../components/BackButton";
-import { createUserWithEmailAndPassword, getAuth, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, updateProfile, User } from "firebase/auth";
 import Router from "next/router";
 import { useAppDispatch } from "../store/config";
 import { setAlertWithTimeOut } from "../store/slices/alertDataSlice";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "./_app";
 
 interface SignUpValidationProps {
   email?: string;
@@ -19,6 +21,22 @@ interface SignUpValidationProps {
 function Join() {
   const dispatch = useAppDispatch();
   const auth = getAuth();
+
+  const setUserInfo = async (user: User) => {
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      email: user.email,
+      nickname: user.displayName,
+      profileImage: user.photoURL || "",
+    })
+      .then(() => {
+        setAlertWithTimeOut(dispatch, "회원가입이 완료되었습니다!");
+        Router.push("/login");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const {
     register,
@@ -34,8 +52,7 @@ function Join() {
         updateProfile(user, {
           displayName: data.nickname,
         }).then(() => {
-          setAlertWithTimeOut(dispatch, "회원가입이 완료되었습니다!");
-          Router.push("/login");
+          setUserInfo(user);
         });
       })
       .catch((error) => {

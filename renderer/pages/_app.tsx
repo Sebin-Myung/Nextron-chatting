@@ -3,15 +3,15 @@ import type { AppProps } from "next/app";
 import "../styles/globals.css";
 import { initializeApp } from "firebase/app";
 import firebaseConfig from "../config/config";
-import { getDatabase } from "firebase/database";
+import { getFirestore } from "firebase/firestore";
 import { Provider } from "react-redux";
 import { store, useAppSelector } from "../store/config";
 import BottomAlert from "../components/BottomAlert";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  const app = initializeApp(firebaseConfig);
-  const database = getDatabase(app);
+const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
 
+function MyApp({ Component, pageProps }: AppProps) {
   process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
 
   return (
