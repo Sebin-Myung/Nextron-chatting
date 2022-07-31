@@ -55,7 +55,7 @@ function Join() {
         <title>Join Page</title>
       </Head>
       <BackButton />
-      <div className="flex flex-col justify-center items-center h-screen">
+      <div className="p-5 flex flex-col justify-center items-center h-screen">
         <Title>회원가입</Title>
         <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
           <input

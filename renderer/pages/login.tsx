@@ -59,7 +59,7 @@ function Login() {
       <Head>
         <title>Login Page</title>
       </Head>
-      <div className="flex flex-col justify-center items-center h-screen">
+      <div className="p-5 flex flex-col justify-center items-center h-screen">
         <Title>로그인</Title>
         <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
           <input

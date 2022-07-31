@@ -4,6 +4,6 @@
 
 @layer base {
   body {
-    @apply p-5 bg-white text-black;
+    @apply bg-white text-black;
   }
 }
