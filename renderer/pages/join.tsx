@@ -13,7 +13,7 @@ interface SignUpValidationProps {
   email?: string;
   password?: string;
   passwordConfirm?: string;
-  displayName?: string;
+  nickname?: string;
 }
 
 function Join() {
@@ -32,7 +32,7 @@ function Join() {
       .then((userCredential) => {
         const user = userCredential.user;
         updateProfile(user, {
-          displayName: data.displayName,
+          displayName: data.nickname,
         }).then(() => {
           setAlertWithTimeOut(dispatch, "회원가입이 완료되었습니다!");
           Router.push("/login");
@@ -93,14 +93,12 @@ function Join() {
           </Warning>
           <input
             type="text"
-            name="displayName"
+            name="nickname"
             placeholder="닉네임을 입력하세요"
             className="input input-bordered w-full mt-2"
-            {...register("displayName", { required: true })}
+            {...register("nickname", { required: true })}
           />
-          <Warning>
-            {errors.displayName && errors.displayName.type === "required" && "닉네임이 입력되지 않았습니다."}
-          </Warning>
+          <Warning>{errors.nickname && errors.nickname.type === "required" && "닉네임이 입력되지 않았습니다."}</Warning>
           <button type="submit" className="btn btn-primary btn-block mt-2">
             회원가입
           </button>

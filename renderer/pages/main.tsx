@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
 import Router from "next/router";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 function Main() {
-  const user = getAuth().currentUser;
-  if (typeof window !== "undefined" && user === null) Router.push("/login");
+  const auth = getAuth();
+
+  useEffect(() => {
+    if (localStorage.getItem("currentUser") === null) Router.push("/login");
+  }, []);
+
   return (
     <React.Fragment>
       <Head>
