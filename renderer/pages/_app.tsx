@@ -12,6 +12,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
 
+  process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
+
   return (
     <Provider store={store}>
       <Component {...pageProps} />

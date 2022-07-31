@@ -1,3 +1,4 @@
+import { getAuth } from "firebase/auth";
 import Link from "next/link";
 import Router from "next/router";
 import { BsPerson, BsPersonFill } from "react-icons/bs";
@@ -16,8 +17,15 @@ const SideMenu = ({
   children: JSX.Element;
 }) => {
   const logout = () => {
-    localStorage.removeItem("currentUser");
-    Router.push("/login");
+    getAuth()
+      .signOut()
+      .then(() => {
+        localStorage.removeItem("currentUser");
+        Router.push("/login");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
