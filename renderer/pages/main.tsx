@@ -1,17 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
 import Router from "next/router";
 import SideMenu from "../layouts/SideMenu";
+import { fetchUserList } from "../store/slices/userListSlice";
+import { useAppDispatch, useAppSelector } from "../store/config";
+import ItemList from "../components/ItemList";
 
 function Main() {
-  const [isLoading, setIsLoading] = useState(true);
+  const { userList, loading } = useAppSelector((state) => state.userList);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (localStorage.getItem("currentUser") === null) Router.push("/login");
-    else setIsLoading(false);
+    if (localStorage.getItem("currentUser") === null) {
+      Router.push("/login");
+    } else {
+      dispatch(fetchUserList());
+    }
   }, []);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (loading === "idle") return <div>Loading...</div>;
 
   return (
     <React.Fragment>
@@ -19,7 +26,11 @@ function Main() {
         <title>Main Page</title>
       </Head>
       <SideMenu category="userList">
-        <div>메인 페이지</div>
+        <ul className="menu w-full h-screen overflow-y-auto">
+          {userList.map((user) => (
+            <ItemList user={user} key={user.uid} />
+          ))}
+        </ul>
       </SideMenu>
     </React.Fragment>
   );
