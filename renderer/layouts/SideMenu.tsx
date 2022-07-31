@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Router from "next/router";
 import { BsPerson, BsPersonFill } from "react-icons/bs";
 import {
   IoChatbubbleEllipsesOutline,
@@ -14,6 +15,11 @@ const SideMenu = ({
   category: "userList" | "chatting" | "groupChatting";
   children: JSX.Element;
 }) => {
+  const logout = () => {
+    localStorage.removeItem("currentUser");
+    Router.push("/login");
+  };
+
   return (
     <div className="flex">
       <nav className="flex flex-col justify-between bg-primary h-screen">
@@ -43,11 +49,12 @@ const SideMenu = ({
             </Link>
           </li>
         </ul>
-        {localStorage.getItem("currentUser") !== null && (
-          <button className="btn btn-primary bg-primary-focus w-[13rem] min-h-8 h-8 lg:h-12 text-xs mx-2 mb-4">
-            로그아웃
-          </button>
-        )}
+        <button
+          className="btn btn-primary bg-primary-focus w-[13rem] min-h-8 h-8 lg:h-12 text-xs mx-2 mb-4"
+          onClick={logout}
+        >
+          로그아웃
+        </button>
       </nav>
       {children}
     </div>
