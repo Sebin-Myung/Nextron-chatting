@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import Head from "next/head";
 import Router from "next/router";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth } from "firebase/auth";
+import SideMenu from "../layouts/SideMenu";
 
 function Main() {
   const auth = getAuth();
@@ -15,7 +16,9 @@ function Main() {
       <Head>
         <title>Main Page</title>
       </Head>
-      <div>메인 페이지</div>
+      <SideMenu category="userList">
+        <div>메인 페이지</div>
+      </SideMenu>
     </React.Fragment>
   );
 }
