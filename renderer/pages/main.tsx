@@ -6,11 +6,11 @@ import { fetchUserList } from "../store/slices/userListSlice";
 import { useAppDispatch, useAppSelector } from "../store/config";
 import ItemList, { ItemListWrapper } from "../components/ItemList";
 import UserProfileModal from "../components/userProfile";
-import { UserInfo, initialState as initialUserInfo } from "../store/slices/userInfoSlice";
+import { UserInfo } from "../store/slices/userInfoSlice";
 
 function Main() {
-  const [currentUser, setCurrentUser] = useState<UserInfo>(initialUserInfo.userInfo);
-  const [user, setUser] = useState<UserInfo>(initialUserInfo.userInfo);
+  const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
+  const [user, setUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { userList, loading } = useAppSelector((state) => state.userList);
   const dispatch = useAppDispatch();
