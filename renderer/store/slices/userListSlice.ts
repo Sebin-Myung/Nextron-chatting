@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, query, orderBy } from "firebase/firestore";
 import { db } from "../../pages/_app";
 
 export const fetchUserList = createAsyncThunk("userList/fetchUserList", async () => {
-  const userSnapshot = await getDocs(collection(db, "users"));
   const result = [];
+  const usersRef = collection(db, "users");
+  const userSnapshot = await getDocs(query(usersRef, orderBy("nickname")));
   userSnapshot.forEach((user) => {
     result.push(user.data());
   });
