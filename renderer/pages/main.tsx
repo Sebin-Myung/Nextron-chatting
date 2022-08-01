@@ -1,12 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Router from "next/router";
 import SideMenu from "../layouts/SideMenu";
 import { fetchUserList } from "../store/slices/userListSlice";
 import { useAppDispatch, useAppSelector } from "../store/config";
-import ItemList from "../components/ItemList";
+import ItemList, { ItemListWrapper } from "../components/ItemList";
+import UserProfileModal from "../components/userProfile";
+import { UserInfo } from "../store/slices/userInfoSlice";
 
 function Main() {
+  const [user, setUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { userList, loading } = useAppSelector((state) => state.userList);
   const dispatch = useAppDispatch();
 
@@ -18,6 +22,11 @@ function Main() {
     }
   }, []);
 
+  const onItemClick = (userInfo: UserInfo) => {
+    setUser(() => userInfo);
+    setIsProfileOpen(true);
+  };
+
   if (loading === "idle") return <div>Loading...</div>;
 
   return (
@@ -26,11 +35,26 @@ function Main() {
         <title>Main Page</title>
       </Head>
       <SideMenu category="userList">
-        <ul className="menu w-full h-screen overflow-y-auto">
-          {userList.map((user) => (
-            <ItemList user={user} key={user.uid} />
-          ))}
-        </ul>
+        <>
+          <ItemListWrapper>
+            {userList.map((user) => (
+              <ItemList
+                user={user}
+                key={user.uid}
+                onClick={() => {
+                  onItemClick(user);
+                }}
+              />
+            ))}
+          </ItemListWrapper>
+          <UserProfileModal
+            user={user}
+            visibility={isProfileOpen}
+            closeModal={() => {
+              setIsProfileOpen(false);
+            }}
+          />
+        </>
       </SideMenu>
     </React.Fragment>
   );

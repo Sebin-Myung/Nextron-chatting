@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getDocs, collection, query, orderBy } from "firebase/firestore";
 import { db } from "../../pages/_app";
+import { UserInfo } from "./userInfoSlice";
 
 export const fetchUserList = createAsyncThunk("userList/fetchUserList", async () => {
   const result = [];
@@ -11,13 +12,6 @@ export const fetchUserList = createAsyncThunk("userList/fetchUserList", async ()
   });
   return result;
 });
-
-export interface UserInfo {
-  uid: string;
-  email: string;
-  nickname: string;
-  profileImage: string;
-}
 
 interface UserListState {
   userList: UserInfo[];
