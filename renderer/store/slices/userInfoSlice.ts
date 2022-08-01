@@ -21,7 +21,7 @@ interface UserInfoState {
   loading: "idle" | "pending" | "succeeded" | "failed";
 }
 
-const initialState: UserInfoState = {
+export const initialState: UserInfoState = {
   userInfo: { uid: "", email: "", nickname: "", profileImage: "" },
   loading: "idle",
 };
