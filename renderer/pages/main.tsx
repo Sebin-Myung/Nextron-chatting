@@ -13,9 +13,10 @@ function Main() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { userList, loading } = useAppSelector((state) => state.userList);
   const dispatch = useAppDispatch();
+  const currentUser: UserInfo = JSON.parse(localStorage.getItem("currentUser"));
 
   useEffect(() => {
-    if (localStorage.getItem("currentUser") === null) {
+    if (currentUser === null) {
       Router.push("/login");
     } else {
       dispatch(fetchUserList());
@@ -37,15 +38,20 @@ function Main() {
       <SideMenu category="userList">
         <>
           <ItemListWrapper>
-            {userList.map((user) => (
-              <ItemList
-                user={user}
-                key={user.uid}
-                onClick={() => {
-                  onItemClick(user);
-                }}
-              />
-            ))}
+            <ItemList user={currentUser} key={currentUser.uid} />
+            <div className="divider m-0 h-fit"></div>
+            {userList.map(
+              (user) =>
+                user.uid !== currentUser.uid && (
+                  <ItemList
+                    user={user}
+                    key={user.uid}
+                    onClick={() => {
+                      onItemClick(user);
+                    }}
+                  />
+                ),
+            )}
           </ItemListWrapper>
           <UserProfileModal
             user={user}
