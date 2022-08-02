@@ -31,13 +31,14 @@ const personalChatting = ({ uid_uid }: { uid_uid: string }) => {
   }, [chattingUserList]);
 
   useEffect(() => {
-    for (let i = 0; i < userInfo.length; i++) {
-      if (userInfo[i].uid !== currentUser.uid) {
-        setTitle(userInfo[i].nickname);
+    const uidList = Object.keys(userInfo);
+    for (let i = 0; i < uidList.length; i++) {
+      if (uidList[i] !== currentUser.uid) {
+        setTitle(userInfo[uidList[i]].nickname);
         break;
       }
     }
-  }, [userInfo.length === 2]);
+  }, [Object.keys(userInfo).length === 2]);
 
   if (currentUser === null) return <div>잘못된 접근입니다.</div>;
 
@@ -47,7 +48,7 @@ const personalChatting = ({ uid_uid }: { uid_uid: string }) => {
         <title>1:1 Chatting</title>
       </Head>
       <SideMenu category="chatting">
-        {userInfoLoading !== "succeeded" || userInfo.length !== 2 ? (
+        {userInfoLoading !== "succeeded" || Object.keys(userInfo).length !== 2 ? (
           <div>Loading...</div>
         ) : (
           <div className="w-full h-screen flex flex-col">
@@ -55,7 +56,7 @@ const personalChatting = ({ uid_uid }: { uid_uid: string }) => {
             <div className="grow w-full bg-rose-50 overflow-y-auto">
               <p>채팅방</p>
             </div>
-            <ChattingInputArea />
+            <ChattingInputArea currentUserUid={currentUser.uid} uid_uid={uid_uid} />
           </div>
         )}
       </SideMenu>

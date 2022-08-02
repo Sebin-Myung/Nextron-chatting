@@ -16,12 +16,12 @@ export interface UserInfo {
 }
 
 interface UserInfoState {
-  userInfo: UserInfo[];
+  userInfo: { [uid: string]: UserInfo };
   loading: "idle" | "pending" | "succeeded" | "failed";
 }
 
 export const initialState: UserInfoState = {
-  userInfo: [],
+  userInfo: {},
   loading: "idle",
 };
 
@@ -30,7 +30,7 @@ export const userInfoSlice = createSlice({
   initialState,
   reducers: {
     resetUserInfo: (state) => {
-      state.userInfo = [];
+      state.userInfo = {};
       state.loading = "idle";
     },
   },
@@ -40,7 +40,7 @@ export const userInfoSlice = createSlice({
         state.loading = "pending";
       })
       .addCase(fetchUserInfo.fulfilled.type, (state, action: PayloadAction<UserInfo>) => {
-        state.userInfo = [...state.userInfo, action.payload];
+        state.userInfo = { ...state.userInfo, [action.payload.uid]: action.payload };
         state.loading = "succeeded";
       })
       .addCase(fetchUserInfo.rejected.type, (state) => {

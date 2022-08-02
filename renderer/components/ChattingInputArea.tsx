@@ -1,11 +1,49 @@
+import { setDoc, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { useRef } from "react";
+import { db } from "../pages/_app";
+import { useAppDispatch } from "../store/config";
+import { setAlertWithTimeOut } from "../store/slices/alertDataSlice";
+import { MessageData } from "../store/slices/chattingDataSlice";
 
-const ChattingInputArea = () => {
+const ChattingInputArea = ({ currentUserUid, uid_uid }: { currentUserUid: string; uid_uid: string }) => {
   const inputMessage = useRef<HTMLTextAreaElement>();
+  const dispatch = useAppDispatch();
 
-  const sendMessage = () => {
-    console.log(inputMessage.current.value);
-    inputMessage.current.value = "";
+  const sendMessage = async () => {
+    const messageData: MessageData = {
+      uid: currentUserUid,
+      timestamp: Date.now(),
+      message: inputMessage.current.value,
+    };
+
+    const chattingRef = doc(db, "chatting", uid_uid);
+    const chattingSnap = await getDoc(chattingRef);
+    if (chattingSnap.exists()) {
+      await updateDoc(chattingRef, {
+        messages: arrayUnion(messageData),
+        lastMessage: messageData,
+      })
+        .then(() => {
+          inputMessage.current.value = "";
+        })
+        .catch((error) => {
+          console.log(error);
+          setAlertWithTimeOut(dispatch, "메세지 전송에 실패하였습니다.");
+        });
+    } else {
+      await setDoc(chattingRef, {
+        users: uid_uid.split("_"),
+        messages: [messageData],
+        lastMessage: messageData,
+      })
+        .then(() => {
+          inputMessage.current.value = "";
+        })
+        .catch((error) => {
+          console.log(error);
+          setAlertWithTimeOut(dispatch, "메세지 전송에 실패하였습니다.");
+        });
+    }
   };
 
   return (
