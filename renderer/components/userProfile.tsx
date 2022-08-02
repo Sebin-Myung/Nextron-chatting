@@ -1,16 +1,24 @@
+import Router from "next/router";
 import { MouseEventHandler } from "react";
 import { UserInfo } from "../store/slices/userInfoSlice";
 import CloseButton from "./CloseButton";
 
 const UserProfileModal = ({
+  currentUser,
   user,
   visibility,
   closeModal,
 }: {
+  currentUser: UserInfo;
   user: UserInfo;
   visibility: boolean;
   closeModal: MouseEventHandler<HTMLButtonElement>;
 }) => {
+  const getUrl = (uidList: string[]) => {
+    uidList.sort();
+    return uidList.join("_");
+  };
+
   return (
     <div
       className={`fixed left-[14rem] right-0 h-full bg-black/40 duration-75 ${
@@ -27,7 +35,14 @@ const UserProfileModal = ({
         </div>
         <div className="flex flex-col h-full justify-between items-center">
           <p className="text-lg font-bold">{user.nickname}</p>
-          <button className="btn btn-primary min-h-8 h-8 mb-6">채팅하기</button>
+          <button
+            className="btn btn-primary min-h-8 h-8 mb-6"
+            onClick={() => {
+              Router.push(`/chatting/${getUrl([currentUser.uid, user.uid])}`);
+            }}
+          >
+            채팅하기
+          </button>
         </div>
       </div>
     </div>

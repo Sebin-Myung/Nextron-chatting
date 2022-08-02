@@ -55,6 +55,7 @@ function Main() {
             )}
           </ItemListWrapper>
           <UserProfileModal
+            currentUser={currentUser}
             user={user}
             visibility={isProfileOpen}
             closeModal={() => {
