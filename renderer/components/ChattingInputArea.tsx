@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { db } from "../pages/_app";
 import { useAppDispatch } from "../store/config";
 import { setAlertWithTimeOut } from "../store/slices/alertDataSlice";
-import { MessageData } from "../store/slices/chattingDataSlice";
+import { fetchChattingData, MessageData } from "../store/slices/chattingDataSlice";
 
 const ChattingInputArea = ({ currentUserUid, uid_uid }: { currentUserUid: string; uid_uid: string }) => {
   const inputMessage = useRef<HTMLTextAreaElement>();
@@ -25,6 +25,7 @@ const ChattingInputArea = ({ currentUserUid, uid_uid }: { currentUserUid: string
       })
         .then(() => {
           inputMessage.current.value = "";
+          dispatch(fetchChattingData(uid_uid));
         })
         .catch((error) => {
           console.log(error);
@@ -38,6 +39,7 @@ const ChattingInputArea = ({ currentUserUid, uid_uid }: { currentUserUid: string
       })
         .then(() => {
           inputMessage.current.value = "";
+          dispatch(fetchChattingData(uid_uid));
         })
         .catch((error) => {
           console.log(error);

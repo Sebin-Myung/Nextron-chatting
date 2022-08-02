@@ -3,8 +3,12 @@ import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import ChattingInputArea from "../../components/ChattingInputArea";
 import ChattingRoomHeader from "../../components/ChattingRoomHeader";
+import MyMessageBox from "../../components/MyMessageBox";
+import OthersMessageBox from "../../components/OthersMessageBox";
+import { ChattingMessageArea, ChattingNoticeBox, ChattingRoomArea } from "../../components/tailwindStyledComponents";
 import SideMenu from "../../layouts/SideMenu";
 import { useAppDispatch, useAppSelector } from "../../store/config";
+import { fetchChattingData } from "../../store/slices/chattingDataSlice";
 import { fetchUserInfo, resetUserInfo, UserInfo } from "../../store/slices/userInfoSlice";
 
 export const getServerSideProps: GetServerSideProps = async ({ query: { uid_uid } }) => {
@@ -16,10 +20,12 @@ const personalChatting = ({ uid_uid }: { uid_uid: string }) => {
   const [chattingUserList, setChattingUserList] = useState<string[]>([]);
   const [title, setTitle] = useState<string>("");
   const { userInfo, loading: userInfoLoading } = useAppSelector((state) => state.userInfo);
+  const { chattingData, loading: chattingDataLoading } = useAppSelector((state) => state.chattingData);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(resetUserInfo());
+    dispatch(fetchChattingData(uid_uid));
     setChattingUserList(uid_uid.split("_"));
     setCurrentUser(() => JSON.parse(localStorage.getItem("currentUser")));
   }, []);
@@ -51,13 +57,32 @@ const personalChatting = ({ uid_uid }: { uid_uid: string }) => {
         {userInfoLoading !== "succeeded" || Object.keys(userInfo).length !== 2 ? (
           <div>Loading...</div>
         ) : (
-          <div className="w-full h-screen flex flex-col">
+          <ChattingRoomArea>
             <ChattingRoomHeader title={title} />
-            <div className="grow w-full bg-rose-50 overflow-y-auto">
-              <p>채팅방</p>
-            </div>
+            <ChattingMessageArea>
+              {chattingData.messages ? (
+                chattingData.messages.map((messageData) =>
+                  messageData.uid === currentUser.uid ? (
+                    <MyMessageBox
+                      key={messageData.timestamp}
+                      message={messageData.message}
+                      timestamp={messageData.timestamp}
+                    />
+                  ) : (
+                    <OthersMessageBox
+                      key={messageData.timestamp}
+                      message={messageData.message}
+                      nickname={userInfo[messageData.uid].nickname}
+                      timestamp={messageData.timestamp}
+                    />
+                  ),
+                )
+              ) : (
+                <ChattingNoticeBox>메세지를 입력해 채팅방을 생성해보세요!</ChattingNoticeBox>
+              )}
+            </ChattingMessageArea>
             <ChattingInputArea currentUserUid={currentUser.uid} uid_uid={uid_uid} />
-          </div>
+          </ChattingRoomArea>
         )}
       </SideMenu>
     </React.Fragment>

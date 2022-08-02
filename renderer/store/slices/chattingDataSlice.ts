@@ -40,7 +40,9 @@ export const chattingDataSlice = createSlice({
         state.loading = "pending";
       })
       .addCase(fetchChattingData.fulfilled.type, (state, action: PayloadAction<ChattingData>) => {
-        state.chattingData = action.payload;
+        state.chattingData.users = action.payload?.users;
+        state.chattingData.messages = action.payload?.messages.reverse();
+        state.chattingData.lastMessage = action.payload?.lastMessage;
         state.loading = "succeeded";
       })
       .addCase(fetchChattingData.rejected.type, (state) => {

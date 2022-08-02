@@ -17,19 +17,22 @@ function Main() {
 
   useEffect(() => {
     setCurrentUser(() => JSON.parse(localStorage.getItem("currentUser")));
+  }, []);
+
+  useEffect(() => {
     if (currentUser === null) {
       Router.push("/login");
     } else {
       dispatch(fetchUserList());
     }
-  }, []);
+  }, [currentUser]);
 
   const onItemClick = (userInfo: UserInfo) => {
     setUser(() => userInfo);
     setIsProfileOpen(true);
   };
 
-  if (loading === "idle") return <div>Loading...</div>;
+  if (currentUser === null || loading === "idle") return <div>Loading...</div>;
 
   return (
     <React.Fragment>
