@@ -15,6 +15,7 @@ export interface MessageData {
 }
 
 export interface ChattingData {
+  url: string;
   users: string[];
   messages: MessageData[];
   lastMessage: MessageData;
@@ -26,7 +27,7 @@ interface ChattingDataState {
 }
 
 export const initialState: ChattingDataState = {
-  chattingData: { users: [], messages: [], lastMessage: { uid: "", timestamp: 0, message: "" } },
+  chattingData: { url: "", users: [], messages: [], lastMessage: { uid: "", timestamp: 0, message: "" } },
   loading: "idle",
 };
 
@@ -40,6 +41,7 @@ export const chattingDataSlice = createSlice({
         state.loading = "pending";
       })
       .addCase(fetchChattingData.fulfilled.type, (state, action: PayloadAction<ChattingData>) => {
+        state.chattingData.url = action.payload?.url;
         state.chattingData.users = action.payload?.users;
         state.chattingData.messages = action.payload?.messages.reverse();
         state.chattingData.lastMessage = action.payload?.lastMessage;

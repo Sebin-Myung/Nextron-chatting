@@ -33,6 +33,7 @@ const ChattingInputArea = ({ currentUserUid, uid_uid }: { currentUserUid: string
         });
     } else {
       await setDoc(chattingRef, {
+        url: uid_uid,
         users: uid_uid.split("_"),
         messages: [messageData],
         lastMessage: messageData,
