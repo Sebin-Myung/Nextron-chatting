@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import alertDataSlice from "./slices/alertDataSlice";
 import chattingDataSlice from "./slices/chattingDataSlice";
+import countSlice from "./slices/countSlice";
 import groupChattingDataSlice from "./slices/groupChattingDataSlice";
 import groupChattingListSlice from "./slices/groupChattingListSlice";
 import personalChattingListSlice from "./slices/personalChattingListSlice";
@@ -17,6 +18,7 @@ export const store = configureStore({
     personalChattingList: personalChattingListSlice,
     groupChattingData: groupChattingDataSlice,
     groupChattingList: groupChattingListSlice,
+    count: countSlice,
   },
 });
 
