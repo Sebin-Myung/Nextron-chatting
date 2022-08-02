@@ -33,7 +33,7 @@ const ListPopup = ({ visibility, closeModal }: { visibility: boolean; closeModal
 
   const createRoom = () => {
     console.log(selectedUserList);
-    if (selectedUserList.length === 0) setAlertWithTimeOut(dispatch, "대화 상대가 선택되지 않았습니다.");
+    if (selectedUserList.length < 2) setAlertWithTimeOut(dispatch, "그룹을 생성하기에 인원이 부족합니다.");
     closeButtonClick();
   };
 

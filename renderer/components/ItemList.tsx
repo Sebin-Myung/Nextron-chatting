@@ -8,7 +8,7 @@ import { getTime } from "./OthersMessageBox";
 interface ItemListProps {
   image?: string;
   title?: string;
-  uid: string;
+  uid?: string;
   message?: MessageData;
   selectOption?: boolean;
   onClick?: Function;
