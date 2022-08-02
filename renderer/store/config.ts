@@ -1,7 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import alertDataSlice from "./slices/alertDataSlice";
-import userCountSlice from "./slices/userCountSlice";
 import userInfoSlice from "./slices/userInfoSlice";
 import userListSlice from "./slices/userListSlice";
 
@@ -10,7 +9,6 @@ export const store = configureStore({
     alertData: alertDataSlice,
     userList: userListSlice,
     userInfo: userInfoSlice,
-    userCount: userCountSlice,
   },
 });
 

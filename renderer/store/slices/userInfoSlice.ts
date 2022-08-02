@@ -2,15 +2,14 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../pages/_app";
 
-export const fetchUserInfo = createAsyncThunk("userInfo/fetchUserInfo", async (userNumber: number) => {
-  const userRef = doc(db, "users", userNumber.toString());
+export const fetchUserInfo = createAsyncThunk("userInfo/fetchUserInfo", async (uid: string) => {
+  const userRef = doc(db, "users", uid);
   const userSnap = await getDoc(userRef);
   if (userSnap.exists()) return userSnap.data();
 });
 
 export interface UserInfo {
   uid: string;
-  userNumber?: number;
   email: string;
   nickname: string;
   profileImage: string;

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Head from "next/head";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Title, Warning } from "../components/tailwindStyledComponents";
@@ -6,11 +6,10 @@ import Link from "next/link";
 import BackButton from "../components/BackButton";
 import { createUserWithEmailAndPassword, getAuth, updateProfile, User } from "firebase/auth";
 import Router from "next/router";
-import { useAppDispatch, useAppSelector } from "../store/config";
+import { useAppDispatch } from "../store/config";
 import { setAlertWithTimeOut } from "../store/slices/alertDataSlice";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "./_app";
-import { fetchUserCount } from "../store/slices/userCountSlice";
 
 interface SignUpValidationProps {
   email?: string;
@@ -20,24 +19,17 @@ interface SignUpValidationProps {
 }
 
 function Join() {
-  const { userCount, loading } = useAppSelector((state) => state.userCount);
   const dispatch = useAppDispatch();
   const auth = getAuth();
 
-  useEffect(() => {
-    dispatch(fetchUserCount());
-  }, []);
-
   const setUserInfo = async (user: User) => {
-    await setDoc(doc(db, "users", `${userCount + 1}`), {
+    await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
-      userNumber: userCount + 1,
       email: user.email,
       nickname: user.displayName,
       profileImage: user.photoURL || "",
     })
       .then(() => {
-        updateDoc(doc(db, "infos", "userInfo"), { count: userCount + 1 });
         setAlertWithTimeOut(dispatch, "회원가입이 완료되었습니다!");
         Router.push("/login");
       })
@@ -73,8 +65,6 @@ function Join() {
         }
       });
   };
-
-  if (loading === "idle") return <div>Loading...</div>;
 
   return (
     <React.Fragment>
