@@ -1,4 +1,4 @@
-import { MouseEventHandler, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import tw from "tailwind-styled-components";
 import { useAppDispatch, useAppSelector } from "../store/config";
 import { MessageData } from "../store/slices/chattingDataSlice";
@@ -10,11 +10,14 @@ interface ItemListProps {
   title?: string;
   uid: string;
   message?: MessageData;
-  onClick?: MouseEventHandler<HTMLLIElement>;
+  selectOption?: boolean;
+  onClick?: Function;
+  visibility?: boolean;
 }
 
-const ItemList = ({ image, title, uid, message, onClick }: ItemListProps) => {
+const ItemList = ({ image, title, uid, message, selectOption = false, onClick, visibility = false }: ItemListProps) => {
   const [itemUser, setItemUser] = useState<UserInfo>();
+  const [isSelected, setIsSelected] = useState<boolean>(false);
   const { userInfo, loading } = useAppSelector((state) => state.userInfo);
   const dispatch = useAppDispatch();
 
@@ -23,14 +26,23 @@ const ItemList = ({ image, title, uid, message, onClick }: ItemListProps) => {
   }, []);
 
   useEffect(() => {
+    setIsSelected(false);
+  }, [visibility]);
+
+  useEffect(() => {
     if (uid) setItemUser(userInfo[uid]);
   }, [userInfo]);
+
+  const onListClick = () => {
+    onClick();
+    if (selectOption) setIsSelected(!isSelected);
+  };
 
   if (loading === "idle" && uid) return;
 
   return (
     itemUser && (
-      <li className="w-full max-h-20 h-full" onClick={onClick}>
+      <li className="w-full max-h-20 h-full" onClick={onListClick}>
         <div className="flex justify-between w-full h-full">
           <div className="flex justify-start gap-3 h-full" style={{ width: "calc(100% - 8rem)" }}>
             <div className="avatar w-fit h-full">
@@ -49,6 +61,16 @@ const ItemList = ({ image, title, uid, message, onClick }: ItemListProps) => {
             </div>
           </div>
           {message && <p>{getTime(message.timestamp)}</p>}
+          {selectOption && (
+            <input
+              type="checkbox"
+              checked={isSelected}
+              className="checkbox checkbox-secondary"
+              onChange={() => {
+                setIsSelected(!isSelected);
+              }}
+            />
+          )}
         </div>
       </li>
     )

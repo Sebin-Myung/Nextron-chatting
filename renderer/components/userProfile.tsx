@@ -1,32 +1,23 @@
 import Router from "next/router";
-import { MouseEventHandler } from "react";
 import { UserInfo } from "../store/slices/userInfoSlice";
-import CloseButton from "./CloseButton";
+import ModalArea from "./ModalArea";
 
-const UserProfileModal = ({
-  currentUser,
-  user,
-  visibility,
-  closeModal,
-}: {
+interface UserProfileModalProps {
   currentUser: UserInfo;
   user: UserInfo;
   visibility: boolean;
-  closeModal: MouseEventHandler<HTMLButtonElement>;
-}) => {
+  closeModal: Function;
+}
+
+const UserProfileModal = ({ currentUser, user, visibility, closeModal }: UserProfileModalProps) => {
   const getUrl = (uidList: string[]) => {
     uidList.sort();
     return uidList.join("_");
   };
 
   return (
-    <div
-      className={`fixed left-[14rem] right-0 h-full bg-black/40 duration-75 ${
-        visibility ? "visible opacity-100" : "invisible opacity-0"
-      }`}
-    >
-      <div className="absolute right-1/2 bottom-1/2 translate-x-1/2 translate-y-1/2 aspect-[4/6] min-h-[16rem] h-3/5 rounded-xl flex flex-col bg-white">
-        <CloseButton onClick={closeModal} />
+    <ModalArea visibility={visibility} closeButtonClick={closeModal}>
+      <>
         <div className="w-full aspect-square p-4">
           <img
             src={user.profileImage === "" ? "/images/defaultProfileImage.png" : user.profileImage}
@@ -44,8 +35,8 @@ const UserProfileModal = ({
             채팅하기
           </button>
         </div>
-      </div>
-    </div>
+      </>
+    </ModalArea>
   );
 };
 

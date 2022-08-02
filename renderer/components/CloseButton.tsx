@@ -1,9 +1,11 @@
-import { MouseEventHandler } from "react";
 import { BsXLg } from "react-icons/bs";
 
-const CloseButton = ({ onClick }: { onClick: MouseEventHandler<HTMLButtonElement> }) => {
+const CloseButton = ({ onClick }: { onClick: Function }) => {
   return (
-    <button className="btn btn-circle btn-outline absolute right-0 m-2 w-8 h-8 min-h-[2rem]" onClick={onClick}>
+    <button
+      className="btn btn-circle btn-outline absolute top-[-2.5rem] right-[-2.5rem] m-2 w-8 h-8 min-h-[2rem]"
+      onClick={() => onClick()}
+    >
       <BsXLg />
     </button>
   );
