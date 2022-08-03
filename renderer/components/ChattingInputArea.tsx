@@ -53,7 +53,7 @@ const ChattingInputArea = ({ category, currentUserUid, url, users }: ChattingInp
         lastMessage: messageData,
       });
       await updateDoc(doc(db, "infos", "counts"), {
-        groupCattingCount: Number(url.slice(5)),
+        groupChattingCount: Number(url.slice(5)),
       });
     }
   };

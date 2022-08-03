@@ -45,19 +45,17 @@ function GroupChatting() {
               />
             ))
           )}
-          <div>
-            <AddButton
-              onClick={() => {
-                setIsModalOpen(true);
-              }}
-            />
-            <ListPopup
-              visibility={isModalOpen}
-              closeModal={() => {
-                setIsModalOpen(false);
-              }}
-            />
-          </div>
+          <AddButton
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          />
+          <ListPopup
+            visibility={isModalOpen}
+            closeModal={() => {
+              setIsModalOpen(false);
+            }}
+          />
         </ItemListWrapper>
       </SideMenu>
     </React.Fragment>

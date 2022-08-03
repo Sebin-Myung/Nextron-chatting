@@ -38,7 +38,7 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
         dispatch(fetchUserInfo(uid));
       });
     }
-  }, [users || groupChattingData]);
+  }, [users, groupChattingData]);
 
   return (
     <React.Fragment>
@@ -46,15 +46,11 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
         <title>Group Chatting</title>
       </Head>
       <SideMenu category="groupChatting">
-        {(userInfoLoading !== "succeeded" || groupChattingDataLoading !== "succeeded") &&
-        Object.keys(userInfo).length !== groupChattingData.users.length ? (
+        {userInfoLoading !== "succeeded" || groupChattingDataLoading !== "succeeded" ? (
           <div>Loading...</div>
         ) : (
           <ChattingRoomArea>
-            <ChattingRoomHeader
-              title={groupChattingData.roomTitle || groupId}
-              people={groupChattingData.users.length}
-            />
+            <ChattingRoomHeader title={groupChattingData.roomTitle || groupId} people={Object.keys(userInfo).length} />
             <ChattingMessageArea>
               {groupChattingData.messages ? (
                 groupChattingData.messages.map((messageData) =>
@@ -68,7 +64,7 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
                     <OthersMessageBox
                       key={messageData.timestamp}
                       message={messageData.message}
-                      nickname={userInfo[messageData.uid].nickname}
+                      nickname={userInfo[messageData.uid]?.nickname}
                       timestamp={messageData.timestamp}
                     />
                   ),
