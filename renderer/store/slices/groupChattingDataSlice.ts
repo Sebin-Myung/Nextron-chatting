@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../pages/_app";
-import { GroupChattingData } from "./groupChattingListSlice";
+import { ChattingData } from "./chattingDataSlice";
 
 export const fetchGroupChattingData = createAsyncThunk(
   "groupChattingData/fetchGroupChattingData",
@@ -12,9 +12,22 @@ export const fetchGroupChattingData = createAsyncThunk(
   },
 );
 
+export const getGroupChattingId = createAsyncThunk("groupChattingData/getGroupChattingId", async (users: string[]) => {
+  const groupChattingRef = collection(db, "groupChatting");
+  const groupChattingSnapshot = await getDocs(query(groupChattingRef, where("users", "in", [users])));
+  return groupChattingSnapshot.empty ? null : (groupChattingSnapshot[0].data() as GroupChattingData).url;
+});
+
+export interface GroupChattingData extends ChattingData {
+  roomTitle: string;
+  roomProfileImage: string;
+}
+
 interface GroupChattingDataState {
   groupChattingData: GroupChattingData;
   loading: "idle" | "pending" | "succeeded" | "failed";
+  groupChattingId: string | null;
+  searchFinish: "idle" | "pending" | "succeeded" | "failed";
 }
 
 export const initialState: GroupChattingDataState = {
@@ -27,6 +40,8 @@ export const initialState: GroupChattingDataState = {
     lastMessage: { uid: "", timestamp: 0, message: "" },
   },
   loading: "idle",
+  groupChattingId: null,
+  searchFinish: "idle",
 };
 
 export const groupChattingDataSlice = createSlice({
@@ -49,6 +64,16 @@ export const groupChattingDataSlice = createSlice({
       })
       .addCase(fetchGroupChattingData.rejected.type, (state) => {
         state.loading = "failed";
+      })
+      .addCase(getGroupChattingId.pending.type, (state) => {
+        state.searchFinish = "pending";
+      })
+      .addCase(getGroupChattingId.fulfilled.type, (state, action: PayloadAction<string | null>) => {
+        state.groupChattingId = action.payload;
+        state.searchFinish = "succeeded";
+      })
+      .addCase(getGroupChattingId.rejected.type, (state) => {
+        state.searchFinish = "failed";
       });
   },
 });

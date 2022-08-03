@@ -1,23 +1,21 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../pages/_app";
-import { ChattingData } from "./chattingDataSlice";
+import { GroupChattingData } from "./groupChattingDataSlice";
 
-export const fetchGroupChattingList = createAsyncThunk("/fetchGroupChattingList", async (currentUid: string) => {
-  const result: GroupChattingData[] = [];
-  const groupChattingRef = collection(db, "groupChatting");
-  const groupChattingSnapshot = await getDocs(query(groupChattingRef, where("users", "array-contains", currentUid)));
-  groupChattingSnapshot.forEach((groupChatting) => {
-    result.push(groupChatting.data() as GroupChattingData);
-  });
-  result.sort((a, b) => b.lastMessage.timestamp - a.lastMessage.timestamp);
-  return result;
-});
-
-export interface GroupChattingData extends ChattingData {
-  roomTitle: string;
-  roomProfileImage: string;
-}
+export const fetchGroupChattingList = createAsyncThunk(
+  "groupChattingList/fetchGroupChattingList",
+  async (currentUid: string) => {
+    const result: GroupChattingData[] = [];
+    const groupChattingRef = collection(db, "groupChatting");
+    const groupChattingSnapshot = await getDocs(query(groupChattingRef, where("users", "array-contains", currentUid)));
+    groupChattingSnapshot.forEach((groupChatting) => {
+      result.push(groupChatting.data() as GroupChattingData);
+    });
+    result.sort((a, b) => b.lastMessage.timestamp - a.lastMessage.timestamp);
+    return result;
+  },
+);
 
 interface GroupChattingListState {
   groupChattingList: GroupChattingData[];

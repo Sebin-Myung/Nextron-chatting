@@ -4,10 +4,59 @@ import { db } from "../pages/_app";
 import { useAppDispatch } from "../store/config";
 import { setAlertWithTimeOut } from "../store/slices/alertDataSlice";
 import { fetchChattingData, MessageData } from "../store/slices/chattingDataSlice";
+import { fetchGroupChattingData } from "../store/slices/groupChattingDataSlice";
 
-const ChattingInputArea = ({ currentUserUid, uid_uid }: { currentUserUid: string; uid_uid: string }) => {
+interface ChattingInputAreaProps {
+  category: "personalChatting" | "groupChatting";
+  currentUserUid: string;
+  url: string;
+  users?: string[];
+}
+
+const ChattingInputArea = ({ category, currentUserUid, url, users }: ChattingInputAreaProps) => {
   const inputMessage = useRef<HTMLTextAreaElement>();
   const dispatch = useAppDispatch();
+
+  const sendPersonalChattingMessage = async (messageData: MessageData) => {
+    const chattingRef = doc(db, "chatting", url);
+    const chattingSnap = await getDoc(chattingRef);
+    if (chattingSnap.exists()) {
+      await updateDoc(chattingRef, {
+        messages: arrayUnion(messageData),
+        lastMessage: messageData,
+      });
+    } else {
+      await setDoc(chattingRef, {
+        url: url,
+        users: url.split("_"),
+        messages: [messageData],
+        lastMessage: messageData,
+      });
+    }
+  };
+
+  const sendGroupChattingMessage = async (messageData: MessageData) => {
+    const groupChattingRef = doc(db, "groupChatting", url);
+    const groupChattingSnap = await getDoc(groupChattingRef);
+    if (groupChattingSnap.exists()) {
+      await updateDoc(groupChattingRef, {
+        messages: arrayUnion(messageData),
+        lastMessage: messageData,
+      });
+    } else {
+      await setDoc(groupChattingRef, {
+        roomTitle: url,
+        roomProfileImage: "",
+        url: url,
+        users: users,
+        messages: [messageData],
+        lastMessage: messageData,
+      });
+      await updateDoc(doc(db, "infos", "counts"), {
+        groupCattingCount: Number(url.slice(5)),
+      });
+    }
+  };
 
   const sendMessage = async () => {
     const messageData: MessageData = {
@@ -16,31 +65,21 @@ const ChattingInputArea = ({ currentUserUid, uid_uid }: { currentUserUid: string
       message: inputMessage.current.value,
     };
 
-    const chattingRef = doc(db, "chatting", uid_uid);
-    const chattingSnap = await getDoc(chattingRef);
-    if (chattingSnap.exists()) {
-      await updateDoc(chattingRef, {
-        messages: arrayUnion(messageData),
-        lastMessage: messageData,
-      })
+    if (category === "personalChatting") {
+      sendPersonalChattingMessage(messageData)
         .then(() => {
           inputMessage.current.value = "";
-          dispatch(fetchChattingData(uid_uid));
+          dispatch(fetchChattingData(url));
         })
         .catch((error) => {
           console.log(error);
           setAlertWithTimeOut(dispatch, "메세지 전송에 실패하였습니다.");
         });
-    } else {
-      await setDoc(chattingRef, {
-        url: uid_uid,
-        users: uid_uid.split("_"),
-        messages: [messageData],
-        lastMessage: messageData,
-      })
+    } else if (category === "groupChatting") {
+      sendGroupChattingMessage(messageData)
         .then(() => {
           inputMessage.current.value = "";
-          dispatch(fetchChattingData(uid_uid));
+          dispatch(fetchGroupChattingData(url));
         })
         .catch((error) => {
           console.log(error);

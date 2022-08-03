@@ -81,7 +81,7 @@ const personalChatting = ({ uid_uid }: { uid_uid: string }) => {
                 <ChattingNoticeBox>메세지를 입력해 채팅방을 생성해보세요!</ChattingNoticeBox>
               )}
             </ChattingMessageArea>
-            <ChattingInputArea currentUserUid={currentUser.uid} uid_uid={uid_uid} />
+            <ChattingInputArea category="personalChatting" currentUserUid={currentUser.uid} url={uid_uid} />
           </ChattingRoomArea>
         )}
       </SideMenu>

@@ -1,21 +1,31 @@
+import Router from "next/router";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/config";
 import { setAlertWithTimeOut } from "../store/slices/alertDataSlice";
+import { fetchCount } from "../store/slices/countSlice";
 import { UserInfo } from "../store/slices/userInfoSlice";
 import { fetchUserList } from "../store/slices/userListSlice";
+import { getGroupChattingId } from "../store/slices/groupChattingDataSlice";
 import ItemList, { ItemListWrapper } from "./ItemList";
 import ModalArea from "./ModalArea";
 
 const ListPopup = ({ visibility, closeModal }: { visibility: boolean; closeModal: Function }) => {
   const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
   const [selectedUserList, setSelectedUserList] = useState<string[]>([]);
-  const { userList, loading } = useAppSelector((state) => state.userList);
+  const { userList, loading: userListLoading } = useAppSelector((state) => state.userList);
+  const { groupChattingId, searchFinish } = useAppSelector((state) => state.groupChattingData);
+  const { count, loading: countLoading } = useAppSelector((state) => state.count);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     setCurrentUser(() => JSON.parse(localStorage.getItem("currentUser")));
     dispatch(fetchUserList());
+    dispatch(fetchCount());
   }, []);
+
+  useEffect(() => {
+    if (currentUser.uid !== "") setSelectedUserList(() => [currentUser.uid]);
+  }, [currentUser]);
 
   const onItemClick = (user: UserInfo) => {
     if (selectedUserList.includes(user.uid)) {
@@ -32,13 +42,23 @@ const ListPopup = ({ visibility, closeModal }: { visibility: boolean; closeModal
   };
 
   const createRoom = () => {
-    console.log(selectedUserList);
-    if (selectedUserList.length < 2) setAlertWithTimeOut(dispatch, "그룹을 생성하기에 인원이 부족합니다.");
-    closeButtonClick();
+    if (selectedUserList.length < 3) {
+      setAlertWithTimeOut(dispatch, "그룹을 생성하기에 인원이 부족합니다.");
+    } else {
+      const users = [...selectedUserList];
+      users.sort();
+      setSelectedUserList(() => users);
+      dispatch(getGroupChattingId(users)).then(({ payload }) => {
+        Router.push({
+          pathname: "/groupChatting/" + (payload || `group${count.groupChattingCount + 1}`),
+          query: { users: selectedUserList },
+        });
+      });
+    }
   };
 
   return (
-    loading === "succeeded" && (
+    userListLoading === "succeeded" && (
       <ModalArea visibility={visibility} closeButtonClick={closeButtonClick}>
         <>
           <ItemListWrapper>

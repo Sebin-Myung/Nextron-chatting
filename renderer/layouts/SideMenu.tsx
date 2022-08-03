@@ -29,7 +29,7 @@ const SideMenu = ({
   };
 
   return (
-    <div className="flex">
+    <div className="flex max-w-screen overflow-hidden">
       <nav className="flex flex-col justify-between bg-primary h-screen">
         <ul className="menu menu-compact gap-1 lg:menu-normal w-56 p-2 pt-4">
           <li className={`${category === "userList" && "border-l-4 border-primary-focus"}`}>
