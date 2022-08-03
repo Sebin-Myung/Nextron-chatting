@@ -58,15 +58,15 @@ function Main() {
                     />
                   ),
               )}
+              <UserProfileModal
+                currentUser={currentUser}
+                user={user}
+                visibility={isProfileOpen}
+                closeModal={() => {
+                  setIsProfileOpen(false);
+                }}
+              />
             </ItemListWrapper>
-            <UserProfileModal
-              currentUser={currentUser}
-              user={user}
-              visibility={isProfileOpen}
-              closeModal={() => {
-                setIsProfileOpen(false);
-              }}
-            />
           </>
         )}
       </SideMenu>

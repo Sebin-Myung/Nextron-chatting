@@ -17,6 +17,7 @@ ml-4
 
 export const ChattingRoomArea = tw.div`
 w-full
+min-w-[18rem]
 h-screen
 flex
 flex-col

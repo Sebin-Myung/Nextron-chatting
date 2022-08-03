@@ -9,7 +9,7 @@ interface ModalAreaProps {
 const ModalArea = ({ visibility, closeButtonClick, children }: ModalAreaProps) => {
   return (
     <div
-      className={`fixed left-[14rem] right-0 h-full bg-black/40 duration-75 ${
+      className={`fixed left-[14rem] right-0 min-w-[22rem] h-full bg-black/40 duration-75 ${
         visibility ? "visible opacity-100" : "invisible opacity-0"
       }`}
     >

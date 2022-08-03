@@ -69,7 +69,7 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
   return (
     value && (
       <li className="w-full max-h-20 h-full" onClick={onListClick}>
-        <div className="flex justify-between h-full" style={{ width: "calc(100vw - 14rem)" }}>
+        <div className="flex justify-between w-full min-w-[18rem] h-full">
           <div className="flex justify-start gap-3 h-full" style={{ width: "calc(100% - 8rem)" }}>
             <div className="avatar aspect-square h-full">
               <div className="w-fit h-full rounded-full border">

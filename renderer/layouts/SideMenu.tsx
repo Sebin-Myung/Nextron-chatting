@@ -29,7 +29,7 @@ const SideMenu = ({
   };
 
   return (
-    <div className="flex max-w-screen overflow-hidden">
+    <div className="flex min-w-[512px] max-w-screen">
       <nav className="flex flex-col justify-between bg-primary h-screen">
         <ul className="menu menu-compact gap-1 lg:menu-normal w-56 p-2 pt-4">
           <li className={`${category === "userList" && "border-l-4 border-primary-focus"}`}>
@@ -64,7 +64,9 @@ const SideMenu = ({
           로그아웃
         </button>
       </nav>
-      <div className="w-full h-screen">{children}</div>
+      <div className="w-full h-screen shrink-0" style={{ width: "calc(100vw - 14rem)" }}>
+        {children}
+      </div>
     </div>
   );
 };
