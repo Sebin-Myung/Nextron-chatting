@@ -8,7 +8,7 @@ export const fetchGroupChattingData = createAsyncThunk(
   async (groupId: string) => {
     const groupChattingRef = doc(db, "groupChatting", groupId);
     const groupChattingSnap = await getDoc(groupChattingRef);
-    if (groupChattingSnap.exists()) return groupChattingSnap.data();
+    if (groupChattingSnap.exists()) return groupChattingSnap.data() as GroupChattingData;
   },
 );
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
 import { useAppDispatch, useAppSelector } from "../store/config";
 import { MessageData } from "../store/slices/chattingDataSlice";
-import { fetchGroupChattingData } from "../store/slices/groupChattingDataSlice";
+import { fetchGroupChattingData, GroupChattingData } from "../store/slices/groupChattingDataSlice";
 import { fetchUserInfo, UserInfo } from "../store/slices/userInfoSlice";
 import { getTime } from "./OthersMessageBox";
 
@@ -25,6 +25,7 @@ interface ItemListProps {
 const ItemList = ({ itemProps, message, selectOption = false, onClick, visibility = false }: ItemListProps) => {
   const [value, setValue] = useState<{ imageProp: string; titleProp: string }>();
   const [itemUser, setItemUser] = useState<UserInfo>();
+  const [groupData, setGroupData] = useState<GroupChattingData>();
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const { userInfo, loading: userInfoLoading } = useAppSelector((state) => state.userInfo);
   const { groupChattingData, loading: groupChattingDataLoading } = useAppSelector((state) => state.groupChattingData);
@@ -38,13 +39,17 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
     if (isPersonalChatting(itemProps)) {
       setValue({ imageProp: itemUser?.profileImage, titleProp: itemUser?.nickname });
     } else {
-      setValue({ imageProp: groupChattingData?.roomProfileImage, titleProp: groupChattingData?.roomTitle });
+      setValue({ imageProp: groupData?.roomProfileImage, titleProp: groupData?.roomTitle });
     }
   };
 
   useEffect(() => {
     if (isPersonalChatting(itemProps)) dispatch(fetchUserInfo(itemProps.uid));
-    else dispatch(fetchGroupChattingData(itemProps.groupId));
+    else {
+      dispatch(fetchGroupChattingData(itemProps.groupId)).then(({ payload }) => {
+        setGroupData(() => payload as GroupChattingData);
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -57,7 +62,7 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
 
   useEffect(() => {
     getProps();
-  }, [itemUser, groupChattingData]);
+  }, [itemUser, groupData]);
 
   const onListClick = () => {
     onClick();
