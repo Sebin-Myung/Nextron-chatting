@@ -3,6 +3,7 @@ import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import ChattingInputArea from "../../components/ChattingInputArea";
 import ChattingRoomHeader from "../../components/ChattingRoomHeader";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import MyMessageBox from "../../components/MyMessageBox";
 import OthersMessageBox from "../../components/OthersMessageBox";
 import { ChattingMessageArea, ChattingNoticeBox, ChattingRoomArea } from "../../components/tailwindStyledComponents";
@@ -55,7 +56,7 @@ const personalChatting = ({ uid_uid }: { uid_uid: string }) => {
       </Head>
       <SideMenu category="chatting">
         {userInfoLoading !== "succeeded" || Object.keys(userInfo).length !== 2 ? (
-          <div>Loading...</div>
+          <LoadingSpinner />
         ) : (
           <ChattingRoomArea>
             <ChattingRoomHeader title={title} />

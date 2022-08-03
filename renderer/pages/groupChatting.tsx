@@ -9,6 +9,7 @@ import { UserInfo } from "../store/slices/userInfoSlice";
 import ItemList, { ItemListWrapper } from "../components/ItemList";
 import Router from "next/router";
 import NoRooms from "../components/NoRooms";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function GroupChatting() {
   const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
@@ -30,20 +31,22 @@ function GroupChatting() {
         <title>Group Chatting</title>
       </Head>
       <SideMenu category="groupChatting">
-        <ItemListWrapper>
+        <>
           {groupChattingListLoading !== "succeeded" ? (
-            <div>Loading...</div>
+            <LoadingSpinner />
           ) : groupChattingList.length === 0 ? (
             <NoRooms />
           ) : (
-            groupChattingList.map((groupChatting) => (
-              <ItemList
-                itemProps={{ groupId: groupChatting.url }}
-                key={groupChatting.url}
-                message={groupChatting.lastMessage}
-                onClick={() => Router.push(`/groupChatting/${groupChatting.url}`)}
-              />
-            ))
+            <ItemListWrapper>
+              {groupChattingList.map((groupChatting) => (
+                <ItemList
+                  itemProps={{ groupId: groupChatting.url }}
+                  key={groupChatting.url}
+                  message={groupChatting.lastMessage}
+                  onClick={() => Router.push(`/groupChatting/${groupChatting.url}`)}
+                />
+              ))}
+            </ItemListWrapper>
           )}
           <AddButton
             onClick={() => {
@@ -56,7 +59,7 @@ function GroupChatting() {
               setIsModalOpen(false);
             }}
           />
-        </ItemListWrapper>
+        </>
       </SideMenu>
     </React.Fragment>
   );

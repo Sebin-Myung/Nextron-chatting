@@ -10,6 +10,7 @@ import ChattingRoomHeader from "../../components/ChattingRoomHeader";
 import MyMessageBox from "../../components/MyMessageBox";
 import OthersMessageBox from "../../components/OthersMessageBox";
 import ChattingInputArea from "../../components/ChattingInputArea";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 export const getServerSideProps: GetServerSideProps = async ({ query: { groupId, users } }) => {
   if (users) return { props: { groupId, users } };
@@ -47,7 +48,7 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
       </Head>
       <SideMenu category="groupChatting">
         {userInfoLoading !== "succeeded" || groupChattingDataLoading !== "succeeded" ? (
-          <div>Loading...</div>
+          <LoadingSpinner />
         ) : (
           <ChattingRoomArea>
             <ChattingRoomHeader title={groupChattingData.roomTitle || groupId} people={Object.keys(userInfo).length} />

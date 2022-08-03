@@ -64,7 +64,7 @@ const SideMenu = ({
           로그아웃
         </button>
       </nav>
-      {children}
+      <div className="w-full h-screen">{children}</div>
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { fetchPersonalChattingList } from "../store/slices/personalChattingListS
 import { UserInfo } from "../store/slices/userInfoSlice";
 import Router from "next/router";
 import NoRooms from "../components/NoRooms";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function Chatting() {
   const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
@@ -33,22 +34,24 @@ function Chatting() {
         <title>1:1 Chatting</title>
       </Head>
       <SideMenu category="chatting">
-        <ItemListWrapper>
+        <>
           {personalChattingListLoading !== "succeeded" ? (
-            <div>Loading...</div>
+            <LoadingSpinner />
           ) : personalChattingList.length === 0 ? (
             <NoRooms />
           ) : (
-            personalChattingList.map((personalChatting) => (
-              <ItemList
-                itemProps={{ uid: getContactUser(personalChatting.users) }}
-                key={personalChatting.lastMessage.timestamp}
-                message={personalChatting.lastMessage}
-                onClick={() => Router.push(`/chatting/${personalChatting.url}`)}
-              />
-            ))
+            <ItemListWrapper>
+              {personalChattingList.map((personalChatting) => (
+                <ItemList
+                  itemProps={{ uid: getContactUser(personalChatting.users) }}
+                  key={personalChatting.lastMessage.timestamp}
+                  message={personalChatting.lastMessage}
+                  onClick={() => Router.push(`/chatting/${personalChatting.url}`)}
+                />
+              ))}
+            </ItemListWrapper>
           )}
-        </ItemListWrapper>
+        </>
       </SideMenu>
     </React.Fragment>
   );
