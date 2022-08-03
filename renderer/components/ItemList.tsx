@@ -1,28 +1,50 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
 import { useAppDispatch, useAppSelector } from "../store/config";
 import { MessageData } from "../store/slices/chattingDataSlice";
+import { fetchGroupChattingData } from "../store/slices/groupChattingDataSlice";
 import { fetchUserInfo, UserInfo } from "../store/slices/userInfoSlice";
 import { getTime } from "./OthersMessageBox";
 
+interface PersonalChattingProps {
+  uid: string;
+}
+
+interface GroupChattingProps {
+  groupId: string;
+}
+
 interface ItemListProps {
-  image?: string;
-  title?: string;
-  uid?: string;
+  itemProps: PersonalChattingProps | GroupChattingProps;
   message?: MessageData;
   selectOption?: boolean;
   onClick?: Function;
   visibility?: boolean;
 }
 
-const ItemList = ({ image, title, uid, message, selectOption = false, onClick, visibility = false }: ItemListProps) => {
+const ItemList = ({ itemProps, message, selectOption = false, onClick, visibility = false }: ItemListProps) => {
+  const [value, setValue] = useState<{ imageProp: string; titleProp: string }>();
   const [itemUser, setItemUser] = useState<UserInfo>();
   const [isSelected, setIsSelected] = useState<boolean>(false);
-  const { userInfo, loading } = useAppSelector((state) => state.userInfo);
+  const { userInfo, loading: userInfoLoading } = useAppSelector((state) => state.userInfo);
+  const { groupChattingData, loading: groupChattingDataLoading } = useAppSelector((state) => state.groupChattingData);
   const dispatch = useAppDispatch();
 
+  const isPersonalChatting = (itemProps: any): itemProps is PersonalChattingProps => {
+    return itemProps.uid !== undefined;
+  };
+
+  const getProps = () => {
+    if (isPersonalChatting(itemProps)) {
+      setValue({ imageProp: itemUser?.profileImage, titleProp: itemUser?.nickname });
+    } else {
+      setValue({ imageProp: groupChattingData?.roomProfileImage, titleProp: groupChattingData?.roomTitle });
+    }
+  };
+
   useEffect(() => {
-    if (uid) dispatch(fetchUserInfo(uid));
+    if (isPersonalChatting(itemProps)) dispatch(fetchUserInfo(itemProps.uid));
+    else dispatch(fetchGroupChattingData(itemProps.groupId));
   }, []);
 
   useEffect(() => {
@@ -30,33 +52,35 @@ const ItemList = ({ image, title, uid, message, selectOption = false, onClick, v
   }, [visibility]);
 
   useEffect(() => {
-    if (uid) setItemUser(userInfo[uid]);
+    if (isPersonalChatting(itemProps)) setItemUser(userInfo[itemProps.uid]);
   }, [userInfo]);
+
+  useEffect(() => {
+    getProps();
+  }, [itemUser, groupChattingData]);
 
   const onListClick = () => {
     onClick();
     if (selectOption) setIsSelected(!isSelected);
   };
 
-  if (loading === "idle" && uid) return;
+  if (userInfoLoading === "idle" && groupChattingDataLoading === "idle") return;
 
   return (
-    itemUser && (
+    value && (
       <li className="w-full max-h-20 h-full" onClick={onListClick}>
         <div className="flex justify-between w-full h-full">
           <div className="flex justify-start gap-3 h-full" style={{ width: "calc(100% - 8rem)" }}>
             <div className="avatar w-fit h-full">
               <div className="w-fit h-full rounded-full">
                 <img
-                  src={
-                    image || (itemUser.profileImage === "" ? "/images/defaultProfileImage.png" : itemUser.profileImage)
-                  }
+                  src={value.imageProp === "" ? "/images/defaultProfileImage.png" : value.imageProp}
                   className="object-cover"
                 />
               </div>
             </div>
             <div className="flex flex-col justify-center w-full shrink-[2]">
-              <p className="font-semibold">{title || itemUser.nickname}</p>
+              <p className="font-semibold">{value.titleProp}</p>
               {message && <p className="text-xs truncate">{message.message}</p>}
             </div>
           </div>

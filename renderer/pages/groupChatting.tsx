@@ -6,7 +6,7 @@ import ListPopup from "../components/ListPopup";
 import { useAppDispatch, useAppSelector } from "../store/config";
 import { fetchGroupChattingList } from "../store/slices/groupChattingListSlice";
 import { UserInfo } from "../store/slices/userInfoSlice";
-import ItemList from "../components/ItemList";
+import ItemList, { ItemListWrapper } from "../components/ItemList";
 import Router from "next/router";
 
 function GroupChatting() {
@@ -23,23 +23,22 @@ function GroupChatting() {
     dispatch(fetchGroupChattingList(currentUser.uid));
   }, [currentUser]);
 
-  if (groupChattingListLoading === "idle") return <div>Loading...</div>;
-
   return (
     <React.Fragment>
       <Head>
         <title>Group Chatting</title>
       </Head>
       <SideMenu category="groupChatting">
-        <>
-          {groupChattingList.length === 0 ? (
+        <ItemListWrapper>
+          {groupChattingListLoading !== "succeeded" ? (
+            <div>Loading...</div>
+          ) : groupChattingList.length === 0 ? (
             <p>생성된 채팅방이 없습니다.</p>
           ) : (
             groupChattingList.map((groupChatting) => (
               <ItemList
-                key={groupChatting.lastMessage.timestamp}
-                title={groupChatting.roomTitle}
-                image={groupChatting.roomProfileImage}
+                itemProps={{ groupId: groupChatting.url }}
+                key={groupChatting.url}
                 message={groupChatting.lastMessage}
                 onClick={() => Router.push(`/groupChatting/${groupChatting.url}`)}
               />
@@ -58,7 +57,7 @@ function GroupChatting() {
               }}
             />
           </div>
-        </>
+        </ItemListWrapper>
       </SideMenu>
     </React.Fragment>
   );

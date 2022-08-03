@@ -33,12 +33,11 @@ function Chatting() {
       </Head>
       <SideMenu category="chatting">
         <ItemListWrapper>
-          <div className="divider m-0 h-fit"></div>
           {personalChattingList ? (
             personalChattingList.map((personalChatting) => (
               <ItemList
+                itemProps={{ uid: getContactUser(personalChatting.users) }}
                 key={personalChatting.lastMessage.timestamp}
-                uid={getContactUser(personalChatting.users)}
                 message={personalChatting.lastMessage}
                 onClick={() => Router.push(`/chatting/${personalChatting.url}`)}
               />

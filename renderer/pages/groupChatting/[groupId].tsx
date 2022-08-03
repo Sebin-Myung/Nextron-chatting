@@ -12,7 +12,8 @@ import OthersMessageBox from "../../components/OthersMessageBox";
 import ChattingInputArea from "../../components/ChattingInputArea";
 
 export const getServerSideProps: GetServerSideProps = async ({ query: { groupId, users } }) => {
-  return { props: { groupId, users } };
+  if (users) return { props: { groupId, users } };
+  else return { props: { groupId } };
 };
 
 function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string[] }) {
@@ -28,10 +29,16 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
   }, []);
 
   useEffect(() => {
-    users.forEach((uid) => {
-      dispatch(fetchUserInfo(uid));
-    });
-  }, [Object.keys(userInfo).length === 0]);
+    if (users) {
+      users.forEach((uid) => {
+        dispatch(fetchUserInfo(uid));
+      });
+    } else if (groupChattingData) {
+      groupChattingData.users.forEach((uid) => {
+        dispatch(fetchUserInfo(uid));
+      });
+    }
+  }, [users || groupChattingData]);
 
   return (
     <React.Fragment>
@@ -39,11 +46,15 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
         <title>Group Chatting</title>
       </Head>
       <SideMenu category="groupChatting">
-        {userInfoLoading !== "succeeded" || Object.keys(userInfo).length !== users.length ? (
+        {(userInfoLoading !== "succeeded" || groupChattingDataLoading !== "succeeded") &&
+        Object.keys(userInfo).length !== groupChattingData.users.length ? (
           <div>Loading...</div>
         ) : (
           <ChattingRoomArea>
-            <ChattingRoomHeader title={groupChattingData.roomTitle || groupId} people={users.length} />
+            <ChattingRoomHeader
+              title={groupChattingData.roomTitle || groupId}
+              people={groupChattingData.users.length}
+            />
             <ChattingMessageArea>
               {groupChattingData.messages ? (
                 groupChattingData.messages.map((messageData) =>

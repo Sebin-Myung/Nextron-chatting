@@ -13,7 +13,6 @@ const ListPopup = ({ visibility, closeModal }: { visibility: boolean; closeModal
   const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
   const [selectedUserList, setSelectedUserList] = useState<string[]>([]);
   const { userList, loading: userListLoading } = useAppSelector((state) => state.userList);
-  const { groupChattingId, searchFinish } = useAppSelector((state) => state.groupChattingData);
   const { count, loading: countLoading } = useAppSelector((state) => state.count);
   const dispatch = useAppDispatch();
 
@@ -66,7 +65,7 @@ const ListPopup = ({ visibility, closeModal }: { visibility: boolean; closeModal
               (user) =>
                 user.uid !== currentUser.uid && (
                   <ItemList
-                    uid={user.uid}
+                    itemProps={{ uid: user.uid }}
                     key={user.uid}
                     selectOption={true}
                     onClick={() => {

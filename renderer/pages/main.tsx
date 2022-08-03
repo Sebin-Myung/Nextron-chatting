@@ -42,13 +42,13 @@ function Main() {
       <SideMenu category="userList">
         <>
           <ItemListWrapper>
-            <ItemList uid={currentUser.uid} key={currentUser.uid} />
+            <ItemList itemProps={{ uid: currentUser.uid }} key={currentUser.uid} />
             <div className="divider m-0 h-fit"></div>
             {userList.map(
               (user) =>
                 user.uid !== currentUser.uid && (
                   <ItemList
-                    uid={user.uid}
+                    itemProps={{ uid: user.uid }}
                     key={user.uid}
                     onClick={() => {
                       onItemClick(user);
