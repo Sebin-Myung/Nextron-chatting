@@ -29,8 +29,8 @@ export const userInfoSlice = createSlice({
   name: "userInfo",
   initialState,
   reducers: {
-    resetUserInfo: (state, action: PayloadAction<{}>) => {
-      state.userInfo = action.payload;
+    resetUserInfo: (state) => {
+      state.userInfo = {};
       state.loading = "idle";
     },
   },

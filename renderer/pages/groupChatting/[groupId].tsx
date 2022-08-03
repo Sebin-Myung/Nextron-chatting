@@ -26,7 +26,7 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(resetUserInfo({}));
+    dispatch(resetUserInfo());
     dispatch(fetchGroupChattingData(groupId));
     setCurrentUser(() => JSON.parse(localStorage.getItem("currentUser")));
   }, []);
