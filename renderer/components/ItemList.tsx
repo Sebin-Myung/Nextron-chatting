@@ -69,7 +69,7 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
   return (
     value && (
       <li className="w-full max-h-20 h-full" onClick={onListClick}>
-        <div className="flex justify-between w-full h-full">
+        <div className="flex justify-between h-full" style={{ width: "calc(100vw - 14rem)" }}>
           <div className="flex justify-start gap-3 h-full" style={{ width: "calc(100% - 8rem)" }}>
             <div className="avatar w-fit h-full">
               <div className="w-fit h-full rounded-full">
@@ -79,7 +79,7 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
                 />
               </div>
             </div>
-            <div className="flex flex-col justify-center w-full shrink-[2]">
+            <div className="flex flex-col justify-center w-10/12 shrink-[2]">
               <p className="font-semibold">{value.titleProp}</p>
               {message && <p className="text-xs truncate">{message.message}</p>}
             </div>
