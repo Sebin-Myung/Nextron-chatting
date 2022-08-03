@@ -31,13 +31,13 @@ function GroupChatting() {
         <title>Group Chatting</title>
       </Head>
       <SideMenu category="groupChatting">
-        <>
+        <ItemListWrapper>
           {groupChattingListLoading !== "succeeded" ? (
             <LoadingSpinner />
           ) : groupChattingList.length === 0 ? (
             <NoRooms />
           ) : (
-            <ItemListWrapper>
+            <>
               {groupChattingList.map((groupChatting) => (
                 <ItemList
                   itemProps={{ groupId: groupChatting.url }}
@@ -46,20 +46,20 @@ function GroupChatting() {
                   onClick={() => Router.push(`/groupChatting/${groupChatting.url}`)}
                 />
               ))}
-            </ItemListWrapper>
+              <AddButton
+                onClick={() => {
+                  setIsModalOpen(true);
+                }}
+              />
+              <ListPopup
+                visibility={isModalOpen}
+                closeModal={() => {
+                  setIsModalOpen(false);
+                }}
+              />
+            </>
           )}
-          <AddButton
-            onClick={() => {
-              setIsModalOpen(true);
-            }}
-          />
-          <ListPopup
-            visibility={isModalOpen}
-            closeModal={() => {
-              setIsModalOpen(false);
-            }}
-          />
-        </>
+        </ItemListWrapper>
       </SideMenu>
     </React.Fragment>
   );
