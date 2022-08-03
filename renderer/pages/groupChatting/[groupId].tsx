@@ -43,7 +43,7 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
           <div>Loading...</div>
         ) : (
           <ChattingRoomArea>
-            <ChattingRoomHeader title={groupChattingData.roomTitle || groupId} />
+            <ChattingRoomHeader title={groupChattingData.roomTitle || groupId} people={users.length} />
             <ChattingMessageArea>
               {groupChattingData.messages ? (
                 groupChattingData.messages.map((messageData) =>
