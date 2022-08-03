@@ -8,6 +8,7 @@ import { fetchGroupChattingList } from "../store/slices/groupChattingListSlice";
 import { UserInfo } from "../store/slices/userInfoSlice";
 import ItemList, { ItemListWrapper } from "../components/ItemList";
 import Router from "next/router";
+import NoRooms from "../components/NoRooms";
 
 function GroupChatting() {
   const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
@@ -33,7 +34,7 @@ function GroupChatting() {
           {groupChattingListLoading !== "succeeded" ? (
             <div>Loading...</div>
           ) : groupChattingList.length === 0 ? (
-            <p>생성된 채팅방이 없습니다.</p>
+            <NoRooms />
           ) : (
             groupChattingList.map((groupChatting) => (
               <ItemList

@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../store/config";
 import { fetchPersonalChattingList } from "../store/slices/personalChattingListSlice";
 import { UserInfo } from "../store/slices/userInfoSlice";
 import Router from "next/router";
+import NoRooms from "../components/NoRooms";
 
 function Chatting() {
   const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
@@ -33,7 +34,11 @@ function Chatting() {
       </Head>
       <SideMenu category="chatting">
         <ItemListWrapper>
-          {personalChattingList ? (
+          {personalChattingListLoading !== "succeeded" ? (
+            <div>Loading...</div>
+          ) : personalChattingList.length === 0 ? (
+            <NoRooms />
+          ) : (
             personalChattingList.map((personalChatting) => (
               <ItemList
                 itemProps={{ uid: getContactUser(personalChatting.users) }}
@@ -42,8 +47,6 @@ function Chatting() {
                 onClick={() => Router.push(`/chatting/${personalChatting.url}`)}
               />
             ))
-          ) : (
-            <p>생성된 채팅방이 없습니다.</p>
           )}
         </ItemListWrapper>
       </SideMenu>
