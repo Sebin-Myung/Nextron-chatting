@@ -46,19 +46,20 @@ function GroupChatting() {
                   onClick={() => Router.push(`/groupChatting/${groupChatting.url}`)}
                 />
               ))}
-              <AddButton
-                onClick={() => {
-                  setIsModalOpen(true);
-                }}
-              />
-              <ListPopup
-                visibility={isModalOpen}
-                closeModal={() => {
-                  setIsModalOpen(false);
-                }}
-              />
             </>
           )}
+          <AddButton
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          />
+          <ListPopup
+            selectOption={true}
+            visibility={isModalOpen}
+            closeModal={() => {
+              setIsModalOpen(false);
+            }}
+          />
         </ItemListWrapper>
       </SideMenu>
     </React.Fragment>

@@ -3,13 +3,20 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/config";
 import { setAlertWithTimeOut } from "../store/slices/alertDataSlice";
 import { fetchCount } from "../store/slices/countSlice";
-import { UserInfo } from "../store/slices/userInfoSlice";
+import { fetchUserInfo, UserInfo } from "../store/slices/userInfoSlice";
 import { fetchUserList } from "../store/slices/userListSlice";
 import { getGroupChattingId } from "../store/slices/groupChattingDataSlice";
 import ItemList, { ItemListWrapper } from "./ItemList";
 import ModalArea from "./ModalArea";
 
-const ListPopup = ({ visibility, closeModal }: { visibility: boolean; closeModal: Function }) => {
+interface ListPopupProps {
+  visibility: boolean;
+  closeModal: Function;
+  selectOption?: boolean;
+  users?: string[];
+}
+
+const ListPopup = ({ visibility, closeModal, selectOption = false, users }: ListPopupProps) => {
   const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
   const [selectedUserList, setSelectedUserList] = useState<string[]>([]);
   const { userList, loading: userListLoading } = useAppSelector((state) => state.userList);
@@ -18,12 +25,14 @@ const ListPopup = ({ visibility, closeModal }: { visibility: boolean; closeModal
 
   useEffect(() => {
     setCurrentUser(() => JSON.parse(localStorage.getItem("currentUser")));
-    dispatch(fetchUserList());
-    dispatch(fetchCount());
+    if (selectOption) {
+      dispatch(fetchUserList());
+      dispatch(fetchCount());
+    }
   }, []);
 
   useEffect(() => {
-    if (currentUser.uid !== "") setSelectedUserList(() => [currentUser.uid]);
+    if (selectOption && currentUser.uid !== "") setSelectedUserList(() => [currentUser.uid]);
   }, [currentUser]);
 
   const onItemClick = (user: UserInfo) => {
@@ -58,27 +67,29 @@ const ListPopup = ({ visibility, closeModal }: { visibility: boolean; closeModal
 
   return (
     userListLoading === "succeeded" && (
-      <ModalArea visibility={visibility} closeButtonClick={closeButtonClick}>
+      <ModalArea visibility={visibility} closeButtonClick={selectOption ? closeButtonClick : closeModal}>
         <>
           <ItemListWrapper>
-            {userList.map(
-              (user) =>
-                user.uid !== currentUser.uid && (
-                  <ItemList
-                    itemProps={{ uid: user.uid }}
-                    key={user.uid}
-                    selectOption={true}
-                    onClick={() => {
-                      onItemClick(user);
-                    }}
-                    visibility={visibility}
-                  />
-                ),
-            )}
+            {selectOption
+              ? userList.map(
+                  (user) =>
+                    user.uid !== currentUser.uid && (
+                      <ItemList
+                        itemProps={{ uid: user.uid }}
+                        key={user.uid}
+                        selectOption={true}
+                        onClick={() => onItemClick(user)}
+                        visibility={visibility}
+                      />
+                    ),
+                )
+              : users.map((user) => <ItemList itemProps={{ uid: user }} key={user} />)}
           </ItemListWrapper>
-          <button className="btn btn-secondary rounded-xl m-2" onClick={createRoom}>
-            생성
-          </button>
+          {selectOption && (
+            <button className="btn btn-secondary rounded-xl m-2" onClick={createRoom}>
+              생성
+            </button>
+          )}
         </>
       </ModalArea>
     )

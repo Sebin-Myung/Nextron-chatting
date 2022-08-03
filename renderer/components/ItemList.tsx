@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { BsPerson } from "react-icons/bs";
 import tw from "tailwind-styled-components";
 import { useAppDispatch, useAppSelector } from "../store/config";
 import { MessageData } from "../store/slices/chattingDataSlice";
@@ -65,7 +66,7 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
   }, [itemUser, groupData]);
 
   const onListClick = () => {
-    onClick();
+    if (onClick) onClick();
     if (selectOption) setIsSelected(!isSelected);
   };
 
@@ -85,7 +86,15 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
               </div>
             </div>
             <div className="flex flex-col justify-center w-10/12 shrink-[2]">
-              <p className="font-semibold">{value.titleProp}</p>
+              <div className="flex items-center">
+                <p className="font-semibold truncate">{value.titleProp}</p>
+                {groupData && (
+                  <div className="flex items-center ml-2 cursor-pointer">
+                    <BsPerson />
+                    <p>{groupData.users.length}</p>
+                  </div>
+                )}
+              </div>
               {message && <p className="text-xs truncate">{message.message}</p>}
             </div>
           </div>

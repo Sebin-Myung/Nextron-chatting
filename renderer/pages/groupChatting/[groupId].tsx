@@ -11,6 +11,7 @@ import MyMessageBox from "../../components/MyMessageBox";
 import OthersMessageBox from "../../components/OthersMessageBox";
 import ChattingInputArea from "../../components/ChattingInputArea";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import ListPopup from "../../components/ListPopup";
 
 export const getServerSideProps: GetServerSideProps = async ({ query: { groupId, users } }) => {
   if (users) return { props: { groupId, users } };
@@ -19,12 +20,13 @@ export const getServerSideProps: GetServerSideProps = async ({ query: { groupId,
 
 function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string[] }) {
   const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { userInfo, loading: userInfoLoading } = useAppSelector((state) => state.userInfo);
   const { groupChattingData, loading: groupChattingDataLoading } = useAppSelector((state) => state.groupChattingData);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(resetUserInfo());
+    dispatch(resetUserInfo({}));
     dispatch(fetchGroupChattingData(groupId));
     setCurrentUser(() => JSON.parse(localStorage.getItem("currentUser")));
   }, []);
@@ -34,7 +36,7 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
       users.forEach((uid) => {
         dispatch(fetchUserInfo(uid));
       });
-    } else if (groupChattingData) {
+    } else {
       groupChattingData.users.forEach((uid) => {
         dispatch(fetchUserInfo(uid));
       });
@@ -47,11 +49,15 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
         <title>Group Chatting</title>
       </Head>
       <SideMenu category="groupChatting">
-        {userInfoLoading !== "succeeded" || groupChattingDataLoading !== "succeeded" ? (
+        {userInfoLoading !== "succeeded" && groupChattingDataLoading !== "succeeded" ? (
           <LoadingSpinner />
         ) : (
           <ChattingRoomArea>
-            <ChattingRoomHeader title={groupChattingData.roomTitle || groupId} people={Object.keys(userInfo).length} />
+            <ChattingRoomHeader
+              title={groupChattingData.roomTitle || groupId}
+              people={users ? users.length : groupChattingData.users.length}
+              onPeopleClick={() => setIsModalOpen(true)}
+            />
             <ChattingMessageArea>
               {groupChattingData.messages ? (
                 groupChattingData.messages.map((messageData) =>
@@ -75,6 +81,13 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
               )}
             </ChattingMessageArea>
             <ChattingInputArea category="groupChatting" currentUserUid={currentUser.uid} url={groupId} users={users} />
+            <ListPopup
+              visibility={isModalOpen}
+              closeModal={() => {
+                setIsModalOpen(false);
+              }}
+              users={users || groupChattingData.users}
+            />
           </ChattingRoomArea>
         )}
       </SideMenu>
