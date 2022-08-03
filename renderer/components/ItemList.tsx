@@ -71,8 +71,8 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
       <li className="w-full max-h-20 h-full" onClick={onListClick}>
         <div className="flex justify-between h-full" style={{ width: "calc(100vw - 14rem)" }}>
           <div className="flex justify-start gap-3 h-full" style={{ width: "calc(100% - 8rem)" }}>
-            <div className="avatar w-fit h-full">
-              <div className="w-fit h-full rounded-full">
+            <div className="avatar aspect-square h-full">
+              <div className="w-fit h-full rounded-full border">
                 <img
                   src={value.imageProp === "" ? "/images/defaultProfileImage.png" : value.imageProp}
                   className="object-cover"
