@@ -3,27 +3,46 @@ import Head from "next/head";
 import SideMenu from "../layouts/SideMenu";
 import AddButton from "../components/AddButton";
 import ListPopup from "../components/ListPopup";
-import { useAppDispatch, useAppSelector } from "../store/config";
-import { fetchGroupChattingList } from "../store/slices/groupChattingListSlice";
 import { UserInfo } from "../store/slices/userInfoSlice";
 import ItemList, { ItemListWrapper } from "../components/ItemList";
 import Router from "next/router";
 import NoRooms from "../components/NoRooms";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { query, collection, where, onSnapshot, Unsubscribe } from "firebase/firestore";
+import { db } from "./_app";
+import { GroupChattingData } from "../config/chattingData";
 
 function GroupChatting() {
   const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
+  const [groupChattingList, setGroupChattingList] = useState<GroupChattingData[]>();
+  const [stopListening, setStopListening] = useState<Unsubscribe>();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { groupChattingList, loading: groupChattingListLoading } = useAppSelector((state) => state.groupChattingList);
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setCurrentUser(() => JSON.parse(localStorage.getItem("currentUser")));
   }, []);
 
   useEffect(() => {
-    dispatch(fetchGroupChattingList(currentUser.uid));
+    const groupChattingQuery = query(
+      collection(db, "groupChatting"),
+      where("users", "array-contains", currentUser?.uid),
+    );
+    const getGroupChattingList = onSnapshot(groupChattingQuery, (querySnapshot) => {
+      const result: GroupChattingData[] = [];
+      querySnapshot.forEach((doc) => {
+        result.push(doc.data() as GroupChattingData);
+      });
+      result.sort((a, b) => b.lastMessage.timestamp - a.lastMessage.timestamp);
+      setGroupChattingList(() => result);
+    });
+    setStopListening(() => getGroupChattingList);
   }, [currentUser]);
+
+  useEffect(() => {
+    return () => {
+      stopListening;
+    };
+  }, []);
 
   return (
     <React.Fragment>
@@ -32,7 +51,7 @@ function GroupChatting() {
       </Head>
       <SideMenu category="groupChatting">
         <ItemListWrapper>
-          {groupChattingListLoading !== "succeeded" ? (
+          {!groupChattingList ? (
             <LoadingSpinner />
           ) : groupChattingList.length === 0 ? (
             <NoRooms />
