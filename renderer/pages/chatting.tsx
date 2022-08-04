@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import SideMenu from "../layouts/SideMenu";
 import ItemList, { ItemListWrapper } from "../components/ItemList";
-import { useAppDispatch } from "../store/config";
 import { UserInfo } from "../store/slices/userInfoSlice";
 import Router from "next/router";
 import NoRooms from "../components/NoRooms";
@@ -13,9 +12,8 @@ import { db } from "./_app";
 
 function Chatting() {
   const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
-  const [personalChattingList, setersonalChattingList] = useState<ChattingData[]>();
+  const [personalChattingList, setPersonalChattingList] = useState<ChattingData[]>();
   const [stopListening, setStopListening] = useState<Unsubscribe>();
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setCurrentUser(() => JSON.parse(localStorage.getItem("currentUser")));
@@ -29,7 +27,7 @@ function Chatting() {
         result.push(doc.data() as ChattingData);
       });
       result.sort((a, b) => b.lastMessage.timestamp - a.lastMessage.timestamp);
-      setersonalChattingList(() => result);
+      setPersonalChattingList(() => result);
     });
     setStopListening(() => getPersonalChattingList);
   }, [currentUser]);
