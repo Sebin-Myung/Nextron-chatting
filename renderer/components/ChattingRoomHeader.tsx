@@ -1,4 +1,3 @@
-import { Unsubscribe } from "firebase/firestore";
 import Router from "next/router";
 import { BsArrowLeft, BsPerson } from "react-icons/bs";
 
