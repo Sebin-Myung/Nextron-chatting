@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/config";
 import { setAlertWithTimeOut } from "../store/slices/alertDataSlice";
 import { fetchCount } from "../store/slices/countSlice";
-import { fetchUserInfo, UserInfo } from "../store/slices/userInfoSlice";
+import { UserInfo } from "../store/slices/userInfoSlice";
 import { fetchUserList } from "../store/slices/userListSlice";
-import { getGroupChattingId } from "../store/slices/groupChattingDataSlice";
 import ItemList, { ItemListWrapper } from "./ItemList";
 import ModalArea from "./ModalArea";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../pages/_app";
+import { GroupChattingData } from "../config/chattingData";
 
 interface ListPopupProps {
   visibility: boolean;
@@ -56,9 +58,15 @@ const ListPopup = ({ visibility, closeModal, selectOption = false, users }: List
       const users = [...selectedUserList];
       users.sort();
       setSelectedUserList(() => users);
-      dispatch(getGroupChattingId(users)).then(({ payload }) => {
+
+      const getGroupChattingId = async (users: string[]) => {
+        const groupChattingRef = collection(db, "groupChatting");
+        const groupChattingSnapshot = await getDocs(query(groupChattingRef, where("users", "in", [users])));
+        return groupChattingSnapshot.empty ? null : (groupChattingSnapshot[0].data() as GroupChattingData).url;
+      };
+      getGroupChattingId(users).then((groupId) => {
         Router.push({
-          pathname: "/groupChatting/" + (payload || `group${count.groupChattingCount + 1}`),
+          pathname: "/groupChatting/" + (groupId || `group${count.groupChattingCount + 1}`),
           query: { users: selectedUserList },
         });
       });
@@ -83,7 +91,7 @@ const ListPopup = ({ visibility, closeModal, selectOption = false, users }: List
                       />
                     ),
                 )
-              : users.map((user) => <ItemList itemProps={{ uid: user }} key={user} />)}
+              : users?.map((user) => <ItemList itemProps={{ uid: user }} key={user} />)}
           </ItemListWrapper>
           {selectOption && (
             <button className="btn btn-secondary rounded-xl m-2" onClick={createRoom}>

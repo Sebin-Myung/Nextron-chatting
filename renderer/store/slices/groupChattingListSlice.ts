@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { GroupChattingData } from "../../config/chattingData";
 import { db } from "../../pages/_app";
-import { GroupChattingData } from "./groupChattingDataSlice";
 
 export const fetchGroupChattingList = createAsyncThunk(
   "groupChattingList/fetchGroupChattingList",

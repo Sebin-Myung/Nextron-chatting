@@ -10,3 +10,8 @@ export interface ChattingData {
   messages: MessageData[];
   lastMessage: MessageData;
 }
+
+export interface GroupChattingData extends ChattingData {
+  roomTitle: string;
+  roomProfileImage: string;
+}

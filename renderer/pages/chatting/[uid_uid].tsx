@@ -1,4 +1,4 @@
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, Unsubscribe } from "firebase/firestore";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import ChattingInputArea from "../../components/ChattingInputArea";
@@ -22,28 +22,30 @@ function PersonalChatting({ uid_uid }: { uid_uid: string }) {
   const [chattingUserList, setChattingUserList] = useState<string[]>([]);
   const [title, setTitle] = useState<string>("");
   const [chattingData, setChattingData] = useState<ChattingData>();
+  const [stopListening, setStopListening] = useState<Unsubscribe>();
   const { userInfo, loading: userInfoLoading } = useAppSelector((state) => state.userInfo);
   const dispatch = useAppDispatch();
-
-  const chattingRef = doc(db, "chatting", uid_uid);
-  const getChattingData = onSnapshot(chattingRef, { includeMetadataChanges: true }, (doc) => {
-    if (doc.exists()) {
-      const data = doc.data();
-      setChattingData(() => {
-        return {
-          url: data.url,
-          users: data.users,
-          messages: data.messages.reverse(),
-          lastMessage: data.lastMessage,
-        };
-      });
-    }
-  });
 
   useEffect(() => {
     dispatch(resetUserInfo());
     setChattingUserList(uid_uid.split("_"));
     setCurrentUser(() => JSON.parse(localStorage.getItem("currentUser")));
+
+    const chattingRef = doc(db, "chatting", uid_uid);
+    const getChattingData = onSnapshot(chattingRef, { includeMetadataChanges: true }, (doc) => {
+      if (doc.exists()) {
+        const data = doc.data();
+        setChattingData(() => {
+          return {
+            url: data.url,
+            users: data.users,
+            messages: data.messages.reverse(),
+            lastMessage: data.lastMessage,
+          };
+        });
+      }
+    });
+    setStopListening(() => getChattingData);
   }, []);
 
   useEffect(() => {
@@ -62,6 +64,12 @@ function PersonalChatting({ uid_uid }: { uid_uid: string }) {
     }
   }, [Object.keys(userInfo).length === 2]);
 
+  useEffect(() => {
+    return () => {
+      stopListening;
+    };
+  }, []);
+
   if (currentUser === null) return <div>잘못된 접근입니다.</div>;
 
   return (
@@ -74,9 +82,9 @@ function PersonalChatting({ uid_uid }: { uid_uid: string }) {
           <LoadingSpinner />
         ) : (
           <ChattingRoomArea>
-            <ChattingRoomHeader title={title} stopListening={getChattingData} />
+            <ChattingRoomHeader title={title} />
             <ChattingMessageArea>
-              {chattingData.messages ? (
+              {chattingData?.messages ? (
                 chattingData.messages.map((messageData) =>
                   messageData.uid === currentUser.uid ? (
                     <MyMessageBox

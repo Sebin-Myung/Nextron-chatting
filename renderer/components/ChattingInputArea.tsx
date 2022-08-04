@@ -4,7 +4,6 @@ import { MessageData } from "../config/chattingData";
 import { db } from "../pages/_app";
 import { useAppDispatch } from "../store/config";
 import { setAlertWithTimeOut } from "../store/slices/alertDataSlice";
-import { fetchGroupChattingData } from "../store/slices/groupChattingDataSlice";
 
 interface ChattingInputAreaProps {
   category: "personalChatting" | "groupChatting";
@@ -78,7 +77,6 @@ const ChattingInputArea = ({ category, currentUserUid, url, users }: ChattingInp
       sendGroupChattingMessage(messageData)
         .then(() => {
           inputMessage.current.value = "";
-          dispatch(fetchGroupChattingData(url));
         })
         .catch((error) => {
           console.log(error);

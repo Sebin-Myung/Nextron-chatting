@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import SideMenu from "../../layouts/SideMenu";
-import { GetServerSideProps } from "next";
 import { useAppDispatch, useAppSelector } from "../../store/config";
-import { fetchGroupChattingData } from "../../store/slices/groupChattingDataSlice";
 import { fetchUserInfo, resetUserInfo, UserInfo } from "../../store/slices/userInfoSlice";
 import { ChattingMessageArea, ChattingNoticeBox, ChattingRoomArea } from "../../components/tailwindStyledComponents";
 import ChattingRoomHeader from "../../components/ChattingRoomHeader";
@@ -12,6 +10,9 @@ import OthersMessageBox from "../../components/OthersMessageBox";
 import ChattingInputArea from "../../components/ChattingInputArea";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import ListPopup from "../../components/ListPopup";
+import { doc, onSnapshot, Unsubscribe } from "firebase/firestore";
+import { db } from "../_app";
+import { GroupChattingData } from "../../config/chattingData";
 
 GroupChattingRoom.getInitialProps = async ({ query: { groupId, users } }) => {
   if (users) return { groupId, users };
@@ -21,14 +22,32 @@ GroupChattingRoom.getInitialProps = async ({ query: { groupId, users } }) => {
 function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string[] }) {
   const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [groupChattingData, setGroupChattingData] = useState<GroupChattingData>();
+  const [stopListening, setStopListening] = useState<Unsubscribe>();
   const { userInfo, loading: userInfoLoading } = useAppSelector((state) => state.userInfo);
-  const { groupChattingData, loading: groupChattingDataLoading } = useAppSelector((state) => state.groupChattingData);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(resetUserInfo());
-    dispatch(fetchGroupChattingData(groupId));
     setCurrentUser(() => JSON.parse(localStorage.getItem("currentUser")));
+
+    const groupChattingRef = doc(db, "groupChatting", groupId);
+    const getGroupChattingData = onSnapshot(groupChattingRef, { includeMetadataChanges: true }, (doc) => {
+      if (doc.exists()) {
+        const data = doc.data();
+        setGroupChattingData(() => {
+          return {
+            roomTitle: data.roomTitle,
+            roomProfileImage: data.roomProfileImage,
+            url: data.url,
+            users: data.users,
+            messages: data.messages.reverse(),
+            lastMessage: data.lastMessage,
+          };
+        });
+      }
+    });
+    setStopListening(() => getGroupChattingData);
   }, []);
 
   useEffect(() => {
@@ -37,11 +56,17 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
         dispatch(fetchUserInfo(uid));
       });
     } else {
-      groupChattingData.users.forEach((uid) => {
+      groupChattingData?.users.forEach((uid) => {
         dispatch(fetchUserInfo(uid));
       });
     }
-  }, [users, groupChattingData]);
+  }, [groupChattingData]);
+
+  useEffect(() => {
+    return () => {
+      stopListening;
+    };
+  }, []);
 
   return (
     <React.Fragment>
@@ -49,17 +74,17 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
         <title>Group Chatting</title>
       </Head>
       <SideMenu category="groupChatting">
-        {userInfoLoading !== "succeeded" && groupChattingDataLoading !== "succeeded" ? (
+        {userInfoLoading !== "succeeded" && Object.keys(userInfo).length < 3 ? (
           <LoadingSpinner />
         ) : (
           <ChattingRoomArea>
             <ChattingRoomHeader
-              title={groupChattingData.roomTitle || groupId}
-              people={users ? users.length : groupChattingData.users.length}
+              title={groupChattingData?.roomTitle || groupId}
+              people={users ? users.length : groupChattingData?.users.length}
               onPeopleClick={() => setIsModalOpen(true)}
             />
             <ChattingMessageArea>
-              {groupChattingData.messages ? (
+              {groupChattingData?.messages ? (
                 groupChattingData.messages.map((messageData) =>
                   messageData.uid === currentUser.uid ? (
                     <MyMessageBox
@@ -86,7 +111,7 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
               closeModal={() => {
                 setIsModalOpen(false);
               }}
-              users={users || groupChattingData.users}
+              users={users || groupChattingData?.users}
             />
           </ChattingRoomArea>
         )}

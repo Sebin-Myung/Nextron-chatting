@@ -1,9 +1,10 @@
+import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { BsPerson } from "react-icons/bs";
 import tw from "tailwind-styled-components";
-import { MessageData } from "../config/chattingData";
+import { GroupChattingData, MessageData } from "../config/chattingData";
+import { db } from "../pages/_app";
 import { useAppDispatch, useAppSelector } from "../store/config";
-import { fetchGroupChattingData, GroupChattingData } from "../store/slices/groupChattingDataSlice";
 import { fetchUserInfo, UserInfo } from "../store/slices/userInfoSlice";
 import { getTime } from "./OthersMessageBox";
 
@@ -28,8 +29,8 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
   const [itemUser, setItemUser] = useState<UserInfo>();
   const [groupData, setGroupData] = useState<GroupChattingData>();
   const [isSelected, setIsSelected] = useState<boolean>(false);
+  const [groupChattingDataLoading, setGroupChattingDataLoading] = useState<boolean>(true);
   const { userInfo, loading: userInfoLoading } = useAppSelector((state) => state.userInfo);
-  const { groupChattingData, loading: groupChattingDataLoading } = useAppSelector((state) => state.groupChattingData);
   const dispatch = useAppDispatch();
 
   const isPersonalChatting = (itemProps: any): itemProps is PersonalChattingProps => {
@@ -47,9 +48,12 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
   useEffect(() => {
     if (isPersonalChatting(itemProps)) dispatch(fetchUserInfo(itemProps.uid));
     else {
-      dispatch(fetchGroupChattingData(itemProps.groupId)).then(({ payload }) => {
-        setGroupData(() => payload as GroupChattingData);
-      });
+      const getGroupChattingData = async (groupId: string) => {
+        const groupChattingRef = doc(db, "groupChatting", groupId);
+        const groupChattingSnap = await getDoc(groupChattingRef);
+        setGroupData(() => groupChattingSnap.data() as GroupChattingData);
+      };
+      getGroupChattingData(itemProps.groupId).then(() => setGroupChattingDataLoading(false));
     }
   }, []);
 
@@ -70,7 +74,7 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
     if (selectOption) setIsSelected(!isSelected);
   };
 
-  if (userInfoLoading === "idle" && groupChattingDataLoading === "idle") return;
+  if (userInfoLoading === "idle" && groupChattingDataLoading) return;
 
   return (
     value && (
