@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { ChattingData } from "../../config/chattingData";
 import { db } from "../../pages/_app";
-import { ChattingData } from "./chattingDataSlice";
 
 export const fetchPersonalChattingList = createAsyncThunk(
   "personalChattingList/fetchPersonalChattingList",

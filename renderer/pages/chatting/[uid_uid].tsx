@@ -1,4 +1,4 @@
-import { GetServerSideProps } from "next";
+import { doc, onSnapshot } from "firebase/firestore";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import ChattingInputArea from "../../components/ChattingInputArea";
@@ -7,10 +7,11 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import MyMessageBox from "../../components/MyMessageBox";
 import OthersMessageBox from "../../components/OthersMessageBox";
 import { ChattingMessageArea, ChattingNoticeBox, ChattingRoomArea } from "../../components/tailwindStyledComponents";
+import { ChattingData } from "../../config/chattingData";
 import SideMenu from "../../layouts/SideMenu";
 import { useAppDispatch, useAppSelector } from "../../store/config";
-import { fetchChattingData } from "../../store/slices/chattingDataSlice";
 import { fetchUserInfo, resetUserInfo, UserInfo } from "../../store/slices/userInfoSlice";
+import { db } from "../_app";
 
 PersonalChatting.getInitialProps = async ({ query: { uid_uid } }) => {
   return { uid_uid };
@@ -20,13 +21,27 @@ function PersonalChatting({ uid_uid }: { uid_uid: string }) {
   const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
   const [chattingUserList, setChattingUserList] = useState<string[]>([]);
   const [title, setTitle] = useState<string>("");
+  const [chattingData, setChattingData] = useState<ChattingData>();
   const { userInfo, loading: userInfoLoading } = useAppSelector((state) => state.userInfo);
-  const { chattingData, loading: chattingDataLoading } = useAppSelector((state) => state.chattingData);
   const dispatch = useAppDispatch();
+
+  const chattingRef = doc(db, "chatting", uid_uid);
+  const getChattingData = onSnapshot(chattingRef, { includeMetadataChanges: true }, (doc) => {
+    if (doc.exists()) {
+      const data = doc.data();
+      setChattingData(() => {
+        return {
+          url: data.url,
+          users: data.users,
+          messages: data.messages.reverse(),
+          lastMessage: data.lastMessage,
+        };
+      });
+    }
+  });
 
   useEffect(() => {
     dispatch(resetUserInfo());
-    dispatch(fetchChattingData(uid_uid));
     setChattingUserList(uid_uid.split("_"));
     setCurrentUser(() => JSON.parse(localStorage.getItem("currentUser")));
   }, []);
@@ -59,7 +74,7 @@ function PersonalChatting({ uid_uid }: { uid_uid: string }) {
           <LoadingSpinner />
         ) : (
           <ChattingRoomArea>
-            <ChattingRoomHeader title={title} />
+            <ChattingRoomHeader title={title} stopListening={getChattingData} />
             <ChattingMessageArea>
               {chattingData.messages ? (
                 chattingData.messages.map((messageData) =>

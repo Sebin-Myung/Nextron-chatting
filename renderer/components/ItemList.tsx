@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { BsPerson } from "react-icons/bs";
 import tw from "tailwind-styled-components";
+import { MessageData } from "../config/chattingData";
 import { useAppDispatch, useAppSelector } from "../store/config";
-import { MessageData } from "../store/slices/chattingDataSlice";
 import { fetchGroupChattingData, GroupChattingData } from "../store/slices/groupChattingDataSlice";
 import { fetchUserInfo, UserInfo } from "../store/slices/userInfoSlice";
 import { getTime } from "./OthersMessageBox";

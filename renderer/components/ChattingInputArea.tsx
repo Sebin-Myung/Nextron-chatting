@@ -1,9 +1,9 @@
 import { setDoc, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { useRef } from "react";
+import { MessageData } from "../config/chattingData";
 import { db } from "../pages/_app";
 import { useAppDispatch } from "../store/config";
 import { setAlertWithTimeOut } from "../store/slices/alertDataSlice";
-import { fetchChattingData, MessageData } from "../store/slices/chattingDataSlice";
 import { fetchGroupChattingData } from "../store/slices/groupChattingDataSlice";
 
 interface ChattingInputAreaProps {
@@ -69,7 +69,6 @@ const ChattingInputArea = ({ category, currentUserUid, url, users }: ChattingInp
       sendPersonalChattingMessage(messageData)
         .then(() => {
           inputMessage.current.value = "";
-          dispatch(fetchChattingData(url));
         })
         .catch((error) => {
           console.log(error);
