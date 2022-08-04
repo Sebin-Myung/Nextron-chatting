@@ -13,9 +13,9 @@ import ChattingInputArea from "../../components/ChattingInputArea";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import ListPopup from "../../components/ListPopup";
 
-export const getServerSideProps: GetServerSideProps = async ({ query: { groupId, users } }) => {
-  if (users) return { props: { groupId, users } };
-  else return { props: { groupId } };
+GroupChattingRoom.getInitialProps = async ({ query: { groupId, users } }) => {
+  if (users) return { groupId, users };
+  else return { groupId };
 };
 
 function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string[] }) {

@@ -12,11 +12,11 @@ import { useAppDispatch, useAppSelector } from "../../store/config";
 import { fetchChattingData } from "../../store/slices/chattingDataSlice";
 import { fetchUserInfo, resetUserInfo, UserInfo } from "../../store/slices/userInfoSlice";
 
-export const getServerSideProps: GetServerSideProps = async ({ query: { uid_uid } }) => {
-  return { props: { uid_uid } };
+PersonalChatting.getInitialProps = async ({ query: { uid_uid } }) => {
+  return { uid_uid };
 };
 
-const personalChatting = ({ uid_uid }: { uid_uid: string }) => {
+function PersonalChatting({ uid_uid }: { uid_uid: string }) {
   const [currentUser, setCurrentUser] = useState<UserInfo>({ uid: "", email: "", nickname: "", profileImage: "" });
   const [chattingUserList, setChattingUserList] = useState<string[]>([]);
   const [title, setTitle] = useState<string>("");
@@ -88,6 +88,6 @@ const personalChatting = ({ uid_uid }: { uid_uid: string }) => {
       </SideMenu>
     </React.Fragment>
   );
-};
+}
 
-export default personalChatting;
+export default PersonalChatting;
