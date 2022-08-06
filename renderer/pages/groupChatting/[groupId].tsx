@@ -13,6 +13,7 @@ import ListPopup from "../../components/ListPopup";
 import { doc, onSnapshot, Unsubscribe } from "firebase/firestore";
 import { db } from "../_app";
 import { GroupChattingData } from "../../config/chattingData";
+import { getFullDate, isDifferentDay } from "../chatting/[uid_uid]";
 
 GroupChattingRoom.getInitialProps = async ({ query: { groupId, users } }) => {
   if (users) return { groupId, users };
@@ -85,22 +86,30 @@ function GroupChattingRoom({ groupId, users }: { groupId: string; users?: string
             />
             <ChattingMessageArea>
               {groupChattingData?.messages ? (
-                groupChattingData.messages.map((messageData) =>
-                  messageData.uid === currentUser.uid ? (
-                    <MyMessageBox
-                      key={messageData.timestamp}
-                      message={messageData.message}
-                      timestamp={messageData.timestamp}
-                    />
-                  ) : (
-                    <OthersMessageBox
-                      key={messageData.timestamp}
-                      message={messageData.message}
-                      nickname={userInfo[messageData.uid]?.nickname}
-                      timestamp={messageData.timestamp}
-                    />
-                  ),
-                )
+                groupChattingData.messages.map((messageData, index) => (
+                  <div key={`${messageData.timestamp}_div`} className="flex flex-col-reverse">
+                    {messageData.uid === currentUser.uid ? (
+                      <MyMessageBox
+                        key={messageData.timestamp}
+                        message={messageData.message}
+                        timestamp={messageData.timestamp}
+                      />
+                    ) : (
+                      <OthersMessageBox
+                        key={messageData.timestamp}
+                        message={messageData.message}
+                        nickname={userInfo[messageData.uid]?.nickname}
+                        timestamp={messageData.timestamp}
+                      />
+                    )}
+                    {(index === groupChattingData.messages.length - 1 ||
+                      isDifferentDay(messageData.timestamp, groupChattingData.messages[index + 1].timestamp)) && (
+                      <ChattingNoticeBox className="mt-4" key={`start_${messageData.timestamp}`}>
+                        {getFullDate(messageData.timestamp)}
+                      </ChattingNoticeBox>
+                    )}
+                  </div>
+                ))
               ) : (
                 <ChattingNoticeBox>메세지를 입력해 채팅방을 생성해보세요!</ChattingNoticeBox>
               )}

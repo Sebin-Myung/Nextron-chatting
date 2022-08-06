@@ -13,6 +13,19 @@ import { useAppDispatch, useAppSelector } from "../../store/config";
 import { fetchUserInfo, resetUserInfo, UserInfo } from "../../store/slices/userInfoSlice";
 import { db } from "../_app";
 
+export const isDifferentDay = (currentTimestamp: number, prevTimeStamp: number) => {
+  const currentDate = new Date(currentTimestamp);
+  const prevDate = new Date(prevTimeStamp);
+  if (currentDate.toDateString() !== prevDate.toDateString()) return true;
+  else return false;
+};
+
+export const getFullDate = (timestamp: number) => {
+  const date = new Date(timestamp);
+  const week = ["일", "월", "화", "수", "목", "금", "토"];
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${week[date.getDay()]}요일`;
+};
+
 PersonalChatting.getInitialProps = async ({ query: { uid_uid } }) => {
   return { uid_uid };
 };
@@ -85,22 +98,30 @@ function PersonalChatting({ uid_uid }: { uid_uid: string }) {
             <ChattingRoomHeader title={title} />
             <ChattingMessageArea>
               {chattingData?.messages ? (
-                chattingData.messages.map((messageData) =>
-                  messageData.uid === currentUser.uid ? (
-                    <MyMessageBox
-                      key={messageData.timestamp}
-                      message={messageData.message}
-                      timestamp={messageData.timestamp}
-                    />
-                  ) : (
-                    <OthersMessageBox
-                      key={messageData.timestamp}
-                      message={messageData.message}
-                      nickname={userInfo[messageData.uid].nickname}
-                      timestamp={messageData.timestamp}
-                    />
-                  ),
-                )
+                chattingData.messages.map((messageData, index) => (
+                  <div key={`${messageData.timestamp}_div`} className="flex flex-col-reverse">
+                    {messageData.uid === currentUser.uid ? (
+                      <MyMessageBox
+                        key={messageData.timestamp}
+                        message={messageData.message}
+                        timestamp={messageData.timestamp}
+                      />
+                    ) : (
+                      <OthersMessageBox
+                        key={messageData.timestamp}
+                        message={messageData.message}
+                        nickname={userInfo[messageData.uid].nickname}
+                        timestamp={messageData.timestamp}
+                      />
+                    )}
+                    {(index === chattingData.messages.length - 1 ||
+                      isDifferentDay(messageData.timestamp, chattingData.messages[index + 1].timestamp)) && (
+                      <ChattingNoticeBox className="mt-4" key={`start_${messageData.timestamp}`}>
+                        {getFullDate(messageData.timestamp)}
+                      </ChattingNoticeBox>
+                    )}
+                  </div>
+                ))
               ) : (
                 <ChattingNoticeBox>메세지를 입력해 채팅방을 생성해보세요!</ChattingNoticeBox>
               )}
