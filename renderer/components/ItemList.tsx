@@ -45,6 +45,28 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
     }
   };
 
+  const getTimeInterval = (timestamp: number) => {
+    const currentTimestamp = Date.now();
+    const currentTime = new Date(currentTimestamp);
+    const recordTime = new Date(timestamp);
+    const currentYear = currentTime.getFullYear();
+    const [recordYear, recordMonth, recordDate] = [
+      recordTime.getFullYear(),
+      recordTime.getMonth(),
+      recordTime.getDate(),
+    ];
+
+    if (currentTimestamp - timestamp < 86400000) {
+      return getTime(timestamp);
+    } else if (currentTimestamp - timestamp < 86400000 * 2) {
+      return "어제";
+    } else if (currentYear === recordYear) {
+      return `${recordMonth + 1}월 ${recordDate}일`;
+    } else {
+      return `${recordYear}. ${recordMonth + 1}. ${recordDate}`;
+    }
+  };
+
   useEffect(() => {
     if (isPersonalChatting(itemProps)) dispatch(fetchUserInfo(itemProps.uid));
     else {
@@ -102,7 +124,7 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
               {message && <p className="text-xs truncate">{message.message}</p>}
             </div>
           </div>
-          {message && <p>{getTime(message.timestamp)}</p>}
+          {message && <p className="text-xs">{getTimeInterval(message.timestamp)}</p>}
           {selectOption && (
             <input
               type="checkbox"
