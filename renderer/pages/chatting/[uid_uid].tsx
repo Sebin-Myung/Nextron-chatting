@@ -8,23 +8,11 @@ import MyMessageBox from "../../components/MyMessageBox";
 import OthersMessageBox from "../../components/OthersMessageBox";
 import { ChattingMessageArea, ChattingNoticeBox, ChattingRoomArea } from "../../components/tailwindStyledComponents";
 import { ChattingData } from "../../config/chattingData";
+import { getFullDate, isDifferentDay } from "../../functions/dateFunctions";
 import SideMenu from "../../layouts/SideMenu";
 import { useAppDispatch, useAppSelector } from "../../store/config";
 import { fetchUserInfo, resetUserInfo, UserInfo } from "../../store/slices/userInfoSlice";
 import { db } from "../_app";
-
-export const isDifferentDay = (currentTimestamp: number, prevTimeStamp: number) => {
-  const currentDate = new Date(currentTimestamp);
-  const prevDate = new Date(prevTimeStamp);
-  if (currentDate.toDateString() !== prevDate.toDateString()) return true;
-  else return false;
-};
-
-export const getFullDate = (timestamp: number) => {
-  const date = new Date(timestamp);
-  const week = ["일", "월", "화", "수", "목", "금", "토"];
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${week[date.getDay()]}요일`;
-};
 
 PersonalChatting.getInitialProps = async ({ query: { uid_uid } }) => {
   return { uid_uid };

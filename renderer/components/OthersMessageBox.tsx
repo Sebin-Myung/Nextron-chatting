@@ -1,19 +1,11 @@
 import tw from "tailwind-styled-components";
+import { getTime } from "../functions/dateFunctions";
 
 interface OthersMessageBoxProps {
   message: string;
   nickname: string;
   timestamp: number;
 }
-
-export const getTime = (timestamp: number) => {
-  const date = new Date(timestamp);
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-  const resultHour = hour < 10 ? "0" + hour : hour.toString();
-  const resultMinute = minute < 10 ? "0" + minute : minute.toString();
-  return resultHour + ":" + resultMinute;
-};
 
 const OthersMessageBox = ({ message, nickname, timestamp }: OthersMessageBoxProps) => {
   return (
@@ -22,7 +14,7 @@ const OthersMessageBox = ({ message, nickname, timestamp }: OthersMessageBoxProp
         <p className="h-4 text-sm">{nickname}</p>
         <OthersMessageBoxWrapper>{message}</OthersMessageBoxWrapper>
       </div>
-      <p className="text-xs self-end ml-1">{getTime(timestamp)}</p>
+      <p className="text-xs self-end ml-1">{getTime(new Date(timestamp))}</p>
     </div>
   );
 };

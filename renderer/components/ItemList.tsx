@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { BsPerson } from "react-icons/bs";
 import tw from "tailwind-styled-components";
 import { GroupChattingData, MessageData } from "../config/chattingData";
+import { getTime } from "../functions/dateFunctions";
 import { db } from "../pages/_app";
 import { useAppDispatch, useAppSelector } from "../store/config";
 import { fetchUserInfo, UserInfo } from "../store/slices/userInfoSlice";
-import { getTime } from "./OthersMessageBox";
 
 interface PersonalChattingProps {
   uid: string;
@@ -57,7 +57,7 @@ const ItemList = ({ itemProps, message, selectOption = false, onClick, visibilit
     ];
 
     if (currentTimestamp - timestamp < 86400000) {
-      return getTime(timestamp);
+      return getTime(recordTime);
     } else if (currentTimestamp - timestamp < 86400000 * 2) {
       return "어제";
     } else if (currentYear === recordYear) {

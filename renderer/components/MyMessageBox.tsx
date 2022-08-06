@@ -1,10 +1,10 @@
 import tw from "tailwind-styled-components";
-import { getTime } from "./OthersMessageBox";
+import { getTime } from "../functions/dateFunctions";
 
 const MyMessageBox = ({ message, timestamp }: { message: string; timestamp: number }) => {
   return (
     <div className="flex justify-end">
-      <p className="text-xs self-end mr-1">{getTime(timestamp)}</p>
+      <p className="text-xs self-end mr-1">{getTime(new Date(timestamp))}</p>
       <MyMessageBoxWrapper>{message}</MyMessageBoxWrapper>
     </div>
   );

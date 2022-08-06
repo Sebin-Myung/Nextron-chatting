@@ -13,7 +13,7 @@ import ListPopup from "../../components/ListPopup";
 import { doc, onSnapshot, Unsubscribe } from "firebase/firestore";
 import { db } from "../_app";
 import { GroupChattingData } from "../../config/chattingData";
-import { getFullDate, isDifferentDay } from "../chatting/[uid_uid]";
+import { getFullDate, isDifferentDay } from "../../functions/dateFunctions";
 
 GroupChattingRoom.getInitialProps = async ({ query: { groupId, users } }) => {
   if (users) return { groupId, users };
