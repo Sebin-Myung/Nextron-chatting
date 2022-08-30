@@ -4,6 +4,7 @@ import { MessageData } from "../config/chattingData";
 import { db } from "../pages/_app";
 import { useAppDispatch } from "../store/config";
 import { setAlertWithTimeOut } from "../store/slices/alertDataSlice";
+import Textarea from "./atoms/Textarea";
 
 interface ChattingInputAreaProps {
   category: "personalChatting" | "groupChatting";
@@ -13,7 +14,7 @@ interface ChattingInputAreaProps {
 }
 
 const ChattingInputArea = ({ category, currentUserUid, url, users }: ChattingInputAreaProps) => {
-  const inputMessage = useRef<HTMLTextAreaElement>();
+  const inputMessage = useRef<HTMLTextAreaElement>(null);
   const dispatch = useAppDispatch();
 
   const sendPersonalChattingMessage = async (messageData: MessageData) => {
@@ -87,10 +88,11 @@ const ChattingInputArea = ({ category, currentUserUid, url, users }: ChattingInp
 
   return (
     <div className="w-full h-36 min-h-[9rem] bg-rose-100 p-2 flex gap-2">
-      <textarea
+      {/* <textarea
         ref={inputMessage}
         className="grow h-full bg-white rounded-xl text-start resize-none overflow-y-auto p-2"
-      />
+      /> */}
+      <Textarea ref={inputMessage}/>
       <button className="btn btn-secondary my-auto" onClick={sendMessage}>
         전송하기
       </button>

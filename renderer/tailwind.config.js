@@ -3,6 +3,7 @@ module.exports = {
     "./renderer/pages/**/*.{js,ts,jsx,tsx}",
     "./renderer/components/**/*.{js,ts,jsx,tsx}",
     "./renderer/layouts/**/*.{js,ts,jsx,tsx}",
+    "../stories/*.stories.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {},
