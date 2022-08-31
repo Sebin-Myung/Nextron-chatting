@@ -1,4 +1,4 @@
-interface TextProps {
+export interface TextProps {
   size?: "xs" | "sm" | "base" | "lg" | "xl" | "3xl"
   bold?: "semibold" | "bold"
   color?: "error" | "secondary"

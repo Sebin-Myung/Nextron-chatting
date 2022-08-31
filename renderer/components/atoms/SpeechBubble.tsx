@@ -11,14 +11,11 @@ const SpeechBubble = ({type, children}: {type: "me" | "others", children: string
 const MyMessageBoxWrapper = tw.div`
 relative
 bg-white
-mt-2
 mr-4
 px-4
 py-2
 w-fit
-max-w-[70%]
 rounded-xl
-self-end
 after:absolute
 after:content-['']
 after:border-[1rem]
@@ -32,7 +29,6 @@ after:translate-x-4`;
 const OthersMessageBoxWrapper = tw.div`
 relative
 bg-secondary
-mt-2
 ml-4
 px-4
 py-2
