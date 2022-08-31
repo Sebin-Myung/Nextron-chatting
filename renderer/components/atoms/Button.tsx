@@ -2,14 +2,14 @@ import Router from "next/router"
 import { BsArrowLeft, BsPlusLg, BsXLg } from "react-icons/bs"
 
 interface ButtonProps {
-  btnType?: "add" | "back" | "close"
+  btnType?: "add" | "back"| "backImage" | "close"
   isSubmit?: boolean
   fullWidth?: boolean
   color?: "primary" | "secondary"
   size?: "medium"
   rounded?: "xl"
   onClick?: Function
-  children?: String
+  children?: string
 }
 
 const Button = ({btnType, isSubmit = false, fullWidth = false, color = "primary", size, rounded, onClick, children}: ButtonProps) => {
@@ -29,6 +29,15 @@ const Button = ({btnType, isSubmit = false, fullWidth = false, color = "primary"
           >
             <BsArrowLeft />
           </button>
+        )
+      case "backImage":
+        return (
+          <BsArrowLeft
+            className="w-8 h-8 p-2 cursor-pointer"
+            onClick={() => {
+              Router.back();
+            }}
+          />
         )
       case "close":
         return (

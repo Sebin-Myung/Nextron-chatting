@@ -1,6 +1,6 @@
 import tw from "tailwind-styled-components";
 
-const SpeechBubble = ({type, children}: {type: "me" | "others", children: String}) => {
+const SpeechBubble = ({type, children}: {type: "me" | "others", children: string}) => {
   if(type === "me") {
      return <MyMessageBoxWrapper>{children}</MyMessageBoxWrapper>
   } else if(type === "others") {
