@@ -1,11 +1,14 @@
 import Link from "next/link"
 
-interface SideMenuListItemProps {
-  isSelected: boolean
-  link: string
+export interface SideMenuData {
+  link: "/main" | "/chatting" | "/groupChatting"
+  title: string
   icon: JSX.Element
   selectedIcon: JSX.Element
-  title: string
+}
+
+interface SideMenuListItemProps extends SideMenuData {
+  isSelected: boolean
 }
 
 const SideMenuListItem = ({isSelected, link, icon, selectedIcon, title}: SideMenuListItemProps) => {
