@@ -8,7 +8,7 @@ const SideMenuList = ({
   currentCategory: string;
 }) => {
   return (
-    <ul className="menu menu-compact gap-1 lg:menu-normal w-56 p-2 pt-4">
+    <ul className="menu menu-compact gap-1 lg:menu-normal">
       {sideMenuDatas.map((data) => (
         <SideMenuListItem
           key={data.link}

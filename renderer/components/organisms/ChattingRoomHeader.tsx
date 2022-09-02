@@ -2,7 +2,7 @@ import Button from "../atoms/Button";
 import Text from "../atoms/Text";
 import Personnel from "../molecules/Personnel";
 
-interface ChattingRoomHeaderProps {
+export interface ChattingRoomHeaderProps {
   title: string;
   groupPersonnel?: number;
   onPeopleClick?: Function;

@@ -4,7 +4,7 @@ import { UserInfo } from "../../store/slices/userInfoSlice";
 import ChattingNoticeBox from "../atoms/ChattingNoticeBox";
 import MessageBox from "../molecules/MessageBox";
 
-interface ChattingMessageListProps {
+export interface ChattingMessageListProps {
   chattingData: ChattingData;
   currentUserUid: string;
   userInfos: { [uid: string]: UserInfo };
@@ -18,7 +18,7 @@ const ChattingMessageList = ({ chattingData, currentUserUid, userInfos }: Chatti
           <MessageBox
             key={messageData.timestamp}
             type={messageData.uid === currentUserUid ? "me" : "others"}
-            nickname={userInfos[messageData.uid].nickname}
+            nickname={userInfos[messageData.uid]?.nickname}
             message={messageData.message}
             time={getTime(new Date(messageData.timestamp))}
           />

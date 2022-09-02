@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import Image from "../atoms/Image";
 import Input from "../atoms/Input";
 import Text from "../atoms/Text";
 import Personnel from "./Personnel";
 
 export interface UserListData {
+  uid?: string;
   image: string;
   title: string;
 }
@@ -16,11 +18,10 @@ interface ChattingRoomListData extends UserListData {
 
 interface CheckBoxListData extends UserListData {
   checkOption: true;
-  isChecked: boolean;
-  onCheckboxChange: Function;
 }
 
 export interface UserListItemProps {
+  visibility?: boolean;
   data: UserListData | ChattingRoomListData | CheckBoxListData;
   onClick: Function;
 }
@@ -28,13 +29,24 @@ export interface UserListItemProps {
 const instanceOfChattingRoomListData = (object: any): object is ChattingRoomListData => {
   return "message" in object;
 };
-const instanceOfCheckBoxListData = (object: any): object is CheckBoxListData => {
+export const instanceOfCheckBoxListData = (object: any): object is CheckBoxListData => {
   return "checkOption" in object;
 };
 
-const UserListItem = ({ data, onClick }: UserListItemProps) => {
+const UserListItem = ({ visibility, data, onClick }: UserListItemProps) => {
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsChecked(false);
+  }, [visibility]);
+
+  const onListClick = () => {
+    setIsChecked(!isChecked);
+    onClick();
+  };
+
   return (
-    <li className="w-full max-h-20 h-full" onClick={() => onClick()}>
+    <li className="w-full max-h-20 h-full" onClick={instanceOfCheckBoxListData(data) ? onListClick : () => onClick()}>
       <div className="flex justify-between w-full min-w-[18rem] h-full">
         <div className="flex justify-start gap-3 h-full" style={{ width: "calc(100% - 8rem)" }}>
           <Image type="circle" src={data.image} />
@@ -53,8 +65,8 @@ const UserListItem = ({ data, onClick }: UserListItemProps) => {
           </div>
         </div>
         {instanceOfChattingRoomListData(data) && <Text size="xs">{data.date}</Text>}
-        {instanceOfCheckBoxListData(data) && (
-          <Input type="checkbox" isChecked={data.isChecked} onChange={data.onCheckboxChange} />
+        {instanceOfCheckBoxListData(data) && data.checkOption && (
+          <Input type="checkbox" isChecked={isChecked} onChange={() => setIsChecked(!isChecked)} />
         )}
       </div>
     </li>

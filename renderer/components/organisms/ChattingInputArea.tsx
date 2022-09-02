@@ -7,7 +7,7 @@ import { setAlertWithTimeOut } from "../../store/slices/alertDataSlice";
 import Button from "../atoms/Button";
 import Textarea from "../atoms/Textarea";
 
-interface ChattingInputAreaProps {
+export interface ChattingInputAreaProps {
   category: "personalChatting" | "groupChatting";
   currentUserUid: string;
   url: string;

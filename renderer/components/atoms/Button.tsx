@@ -1,26 +1,39 @@
-import Router from "next/router"
-import { BsArrowLeft, BsPlusLg, BsXLg } from "react-icons/bs"
+import Router from "next/router";
+import { BsArrowLeft, BsPlusLg, BsXLg } from "react-icons/bs";
 
 interface ButtonProps {
-  btnType?: "add" | "back"| "backImage" | "close"
-  isSubmit?: boolean
-  fullWidth?: boolean
-  color?: "primary" | "secondary"
-  size?: "medium"
-  rounded?: "xl"
-  onClick?: Function
-  children?: string
+  btnType?: "add" | "back" | "backImage" | "close";
+  isSubmit?: boolean;
+  fullWidth?: boolean;
+  color?: "primary" | "secondary";
+  focus?: boolean;
+  size?: "medium";
+  rounded?: "xl";
+  textSize?: "xs";
+  onClick?: Function;
+  children?: string;
 }
 
-const Button = ({btnType, isSubmit = false, fullWidth = false, color = "primary", size, rounded, onClick, children}: ButtonProps) => {
-  if(btnType) {
-    switch(btnType) {
+const Button = ({
+  btnType,
+  isSubmit = false,
+  fullWidth = false,
+  color = "primary",
+  focus = false,
+  size,
+  rounded,
+  textSize,
+  onClick,
+  children,
+}: ButtonProps) => {
+  if (btnType) {
+    switch (btnType) {
       case "add":
         return (
           <button className="btn btn-secondary btn-circle" onClick={() => onClick()}>
             <BsPlusLg />
           </button>
-        )
+        );
       case "back":
         return (
           <button
@@ -29,7 +42,7 @@ const Button = ({btnType, isSubmit = false, fullWidth = false, color = "primary"
           >
             <BsArrowLeft />
           </button>
-        )
+        );
       case "backImage":
         return (
           <BsArrowLeft
@@ -38,31 +51,32 @@ const Button = ({btnType, isSubmit = false, fullWidth = false, color = "primary"
               Router.back();
             }}
           />
-        )
+        );
       case "close":
         return (
-          <button
-            className="btn btn-circle btn-outline w-8 h-8 min-h-[2rem]"
-            onClick={() => onClick()}
-          >
+          <button className="btn btn-circle btn-outline w-8 h-8 min-h-[2rem]" onClick={() => onClick()}>
             <BsXLg />
           </button>
-        )
+        );
     }
   }
 
-  const classes = ["btn"]
-  if(fullWidth) classes.push("btn-block")
-  classes.push(`btn-${color}`)
-  if(size && size === "medium") {
-    classes.push("min-h-8")
-    classes.push("h-8")
+  const classes = ["btn"];
+  if (fullWidth) classes.push("btn-block");
+  classes.push(`btn-${color}`);
+  if (focus) classes.push(`bg-${color}-focus`);
+  if (size && size === "medium") {
+    classes.push("min-h-8");
+    classes.push("h-8");
   }
-  if(rounded && rounded === "xl") classes.push("rounded-xl")
+  if (rounded && rounded === "xl") classes.push("rounded-xl");
+  if (textSize) classes.push(`text-${textSize}`);
 
   return (
-    <button type={isSubmit ? "submit" : "button"} className={classes.join(" ")} onClick={() => onClick()}>{children}</button>
-  )
-}
+    <button type={isSubmit ? "submit" : "button"} className={classes.join(" ")} onClick={() => onClick()}>
+      {children}
+    </button>
+  );
+};
 
-export default Button
+export default Button;
